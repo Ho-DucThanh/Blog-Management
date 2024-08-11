@@ -1,6 +1,5 @@
 import React from "react";
 import LoginForm from "../../Components/Forms/LoginForm";
-import { LoginProvider } from "../../Context/Auth/LoginContext";
 
 export default function LoginPage() {
   return (
@@ -17,9 +16,7 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <LoginProvider>
-          <LoginForm />
-        </LoginProvider>
+        <LoginForm />
 
         <div className="mt-10 flex justify-between text-sm">
           <div>
