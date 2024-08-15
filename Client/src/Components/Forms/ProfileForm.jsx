@@ -1,35 +1,69 @@
-import React, { useContext } from "react";
+import Button from "../Common/Button";
 import AuthInput from "../Common/AuthInput";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import { ProfileContext } from "../../Context/Auth/ProfileContext";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
+import { ProfileUser } from "../../Redux/Home/Profile_apiRequest";
+import { format } from "date-fns";
 
 export default function ProfileForm() {
-  const {
-    avatar,
-    userName,
-    date,
-    sex,
-    role,
-    phone,
-    address,
-    error,
-    setAvatar,
-    setUserName,
-    setDate,
-    setSex,
-    setRole,
-    setPhone,
-    setAddress,
-    handleSubmit,
-  } = useContext(ProfileContext);
+  const [formData, setFormData] = useState({});
+  const [avatar, setAvatar] = useState(null);
+  const [error, setError] = useState("");
+  const { loading } = useSelector((state) => state.profile.createProfile);
+  const user = useSelector((state) => state.auth.login.currentUser);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const handleChange = (e) => {
+    if (e.target.id === "file-upload") {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setAvatar(reader.result);
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value,
+      });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formattedDate = format(new Date(formData.date), "dd-MM-yyyy");
+
+    const updateFormData = {
+      ...formData,
+      user_id: user._id,
+      date: formattedDate,
+      avatar: avatar || "",
+    };
+    setError("");
+    console.log(updateFormData);
+    ProfileUser(updateFormData, dispatch, navigate, setError);
+  };
   return (
-    <form
-      action="#"
-      method="POST"
-      onSubmit={handleSubmit}
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <label
+        htmlFor="role"
+        className="block text-sm font-medium leading-6 text-blue-700"
+      >
+        Hello {user?.email}
+      </label>
       <div className="col-span-full">
         <label
           htmlFor="cover-photo"
@@ -39,7 +73,11 @@ export default function ProfileForm() {
         </label>
         <div className="mt-2 flex rounded-lg border border-dashed border-gray-900/25 px-2">
           {avatar ? (
-            <img src={avatar} alt="avatar" className="h-12 w-12 rounded-full" />
+            <img
+              src={avatar}
+              alt="Selected Avatar"
+              className="h-12 w-12 rounded-full"
+            />
           ) : (
             <UserCircleIcon
               aria-hidden="true"
@@ -57,9 +95,7 @@ export default function ProfileForm() {
                 name="file-upload"
                 type="file"
                 className="sr-only"
-                onChange={(e) =>
-                  setAvatar(URL.createObjectURL(e.target.files[0]))
-                }
+                onChange={handleChange}
               />
             </label>
           </div>
@@ -70,18 +106,14 @@ export default function ProfileForm() {
         id="userName"
         name="userName"
         type="text"
-        autoComplete="userName"
-        value={userName}
-        onChange={(e) => setUserName(e.target.value)}
+        onChange={handleChange}
       />
       <AuthInput
         label="Date of Birth"
         id="date"
         name="date"
         type="date"
-        autoComplete="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
+        onChange={handleChange}
       />
       <div className="space-y-2">
         <label
@@ -93,9 +125,7 @@ export default function ProfileForm() {
         <select
           id="sex"
           name="sex"
-          autoComplete="sex"
-          value={sex}
-          onChange={(e) => setSex(e.target.value)}
+          onChange={handleChange}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
         >
           <option value="male">Male</option>
@@ -113,9 +143,7 @@ export default function ProfileForm() {
         <select
           id="role"
           name="role"
-          autoComplete="role"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
+          onChange={handleChange}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
         >
           <option value="student">Student</option>
@@ -127,34 +155,21 @@ export default function ProfileForm() {
         id="phone"
         name="phone"
         type="text"
-        autoComplete="phone"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        onChange={handleChange}
       />
       <AuthInput
         label="Address"
         id="address"
         name="address"
         type="text"
-        autoComplete="address"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
+        onChange={handleChange}
       />
       {error && <p className="text-sm text-red-500">{error}</p>}
-      <div className="mt-6 flex items-center justify-center gap-x-6">
-        <button
-          type="button"
-          className="rounded-md bg-slate-100 px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-indigo-100"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-        >
-          Save
-        </button>
-      </div>
+      <Button
+        disabled={loading}
+        type="submit"
+        children={loading ? "Loading..." : "Save"}
+      ></Button>
     </form>
   );
 }

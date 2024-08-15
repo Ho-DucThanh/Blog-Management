@@ -1,4 +1,5 @@
 const ProfileModel = require("../Models/ProfileModel");
+const UserModel = require("../Models/UserModel");
 const { parse, isValid } = require("date-fns");
 
 // Check UserName
@@ -38,11 +39,11 @@ const validateAddress = (address) => {
 
 const ProfileController = {
   createProfile: async (req, res) => {
-    const { userId, userName, date, sex, role, phone, address, avatar } =
+    const { user_id, userName, date, sex, role, phone, address, avatar } =
       req.body;
 
     // Check null
-    if (!userId || !userName || !date || !sex || !role || !phone || !address) {
+    if (!user_id || !userName || !date || !sex || !role || !phone || !address) {
       return res
         .status(400)
         .json({ message: "Please complete all information" });
@@ -80,7 +81,12 @@ const ProfileController = {
         return res.status(400).json({ message: "Invalid date" });
       }
 
-      const existingProfile = await ProfileModel.findOne({ user_id: userId });
+      const userExists = await UserModel.findById(user_id);
+      if (!userExists) {
+        return res.status(400).json({ message: "User does not exist" });
+      }
+
+      const existingProfile = await ProfileModel.findOne({ user_id: user_id });
       if (existingProfile) {
         return res.status(400).json({ message: "Profile already exists" });
       }
@@ -90,8 +96,8 @@ const ProfileController = {
         return res.status(400).json({ message: "UserName already exists" });
       }
 
-      const newProfile = new ProfileModel({
-        user_id: userId,
+      const newProfile = await ProfileModel.create({
+        user_id: user_id,
         userName,
         date: parsedDate,
         sex,
@@ -101,13 +107,25 @@ const ProfileController = {
         avatar,
       });
 
-      await newProfile.save();
-      res
-        .status(201)
-        .json({ message: "Profile created successfully", newProfile });
+      const { avatar: ava, ...rest } = newProfile._doc;
+
+      res.status(201).json({
+        message: "Profile created successfully",
+        profile: rest,
+      });
     } catch (err) {
       res.status(500).json({ message: "Internal server error", err });
     }
+  },
+
+  getProfile: async (req, res) => {
+    const userProfile = await ProfileModel.findOne({
+      user_id: req.params.user_id,
+    });
+    if (!userProfile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+    return res.status(200).json({ userProfile: userProfile });
   },
 };
 

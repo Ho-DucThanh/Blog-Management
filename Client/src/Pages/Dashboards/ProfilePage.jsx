@@ -1,6 +1,5 @@
 import React from "react";
 import ProfileForm from "../../Components/Forms/ProfileForm";
-import { ProfileProvider } from "../../Context/Auth/ProfileContext";
 
 export default function ProfilePage() {
   return (
@@ -16,9 +15,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-        <ProfileProvider>
-          <ProfileForm />
-        </ProfileProvider>
+        <ProfileForm />
       </div>
     </div>
   );

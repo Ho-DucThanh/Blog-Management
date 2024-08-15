@@ -1,19 +1,31 @@
 import AuthInput from "../Common/AuthInput";
 import Button from "../Common/Button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-} from "../../Redux/Auth/AuthSlice";
+import { loginUser } from "../../Redux/Auth/Auth_apiRequest";
+import { getProfileUser } from "../../Redux/Home/Profile_apiRequest";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
-  const [formData, setFormData] = React.useState({});
-  const { loading, error } = useSelector((state) => state.auth);
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState("");
+  const user = useSelector((state) => state.auth.login.currentUser);
+  const loading = useSelector((state) => state.auth.login.loading);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      getProfileUser(user._id)
+        .then((profile) => {
+          if (profile) navigate("/");
+          else navigate("/profile");
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,27 +36,8 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginStart());
-    try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      console.log(data);
-      if (data.success === false) {
-        dispatch(loginFailure(data.message));
-        return;
-      }
-      dispatch(loginSuccess(data));
-      alert("Login successful");
-      navigate("/profile");
-    } catch (error) {
-      dispatch(loginFailure(error.message));
-    }
+    setError("");
+    loginUser(formData, dispatch, setError);
   };
 
   return (
@@ -54,8 +47,6 @@ export default function LoginForm() {
         id="email"
         name="email"
         type="email"
-        autoComplete="email"
-        value=""
         onChange={handleChange}
       />
       <AuthInput
@@ -63,14 +54,14 @@ export default function LoginForm() {
         id="password"
         name="password"
         type="password"
-        autoComplete="current-password"
-        value=""
         onChange={handleChange}
       />
       {error && <p className="text-sm text-red-500">{error}</p>}
-      <div>
-        <Button type="submit" children="Sign in"></Button>
-      </div>
+      <Button
+        disabled={loading}
+        type="submit"
+        children={loading ? "Loading..." : "Sign In"}
+      ></Button>
     </form>
   );
 }

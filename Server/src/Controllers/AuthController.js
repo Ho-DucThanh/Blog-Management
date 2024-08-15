@@ -59,7 +59,7 @@ const AuthController = {
         admin: user.admin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "30s" }
+      { expiresIn: "60s" }
     );
   },
 
@@ -174,4 +174,4 @@ const AuthController = {
   },
 };
 
-module.exports = AuthController; 
+module.exports = AuthController;

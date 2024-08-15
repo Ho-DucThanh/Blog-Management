@@ -1,6 +1,5 @@
 import React from "react";
 import SignUpForm from "../../Components/Forms/SignUpForm";
-import { SignupProvider } from "../../Context/Auth/SignUpContext";
 
 export default function SignUpPage() {
   return (
@@ -17,9 +16,7 @@ export default function SignUpPage() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <SignupProvider>
-          <SignUpForm />
-        </SignupProvider>
+        <SignUpForm />
 
         <p className="mt-10 text-center text-sm text-gray-500">
           You already have an account!{" "}
