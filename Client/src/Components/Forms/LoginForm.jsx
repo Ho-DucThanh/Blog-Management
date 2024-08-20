@@ -3,29 +3,16 @@ import Button from "../Common/Button";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { loginUser } from "../../Redux/Auth/Auth_apiRequest";
-import { getProfileUser } from "../../Redux/Home/Profile_apiRequest";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState("");
-  const user = useSelector((state) => state.auth.login.currentUser);
-  const loading = useSelector((state) => state.auth.login.loading);
+  const { currentUser, accessToken, loading } = useSelector(
+    (state) => state.auth.login,
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (user) {
-      getProfileUser(user._id)
-        .then((profile) => {
-          if (profile) navigate("/");
-          else navigate("/profile");
-        })
-        .catch((error) => {
-          setError(error.message);
-        });
-    }
-  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -37,7 +24,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    loginUser(formData, dispatch, setError);
+    loginUser(formData, dispatch, setError, navigate);
   };
 
   return (

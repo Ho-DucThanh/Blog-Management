@@ -13,7 +13,7 @@ const validateEmail = (email) => {
 export default function SignUpForm() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState("");
-  const { loading } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth.register);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

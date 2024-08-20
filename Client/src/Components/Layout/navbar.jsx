@@ -9,6 +9,9 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../Redux/Auth/Auth_apiRequest";
 
 const navigation = [
   { name: "Home", href: "#", current: true },
@@ -23,11 +26,28 @@ const menuItemsUser = [
   { name: "Policy", href: "#" },
 ];
 
+const menuItemsUserLogin = [
+  { name: "Your Profile", href: "/profile" },
+  { name: "Courses", href: "/courses" },
+  { name: "Logout", href: "#" },
+];
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser, accessToken } = useSelector((state) => state.auth.login);
+  const avatar = useSelector(
+    (state) => state.profile.createProfile.currentUser?.avatar,
+  );
+
+  const handleLogout = () => {
+    logoutUser(accessToken, currentUser._id, dispatch, navigate);
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -84,28 +104,52 @@ export default function Navbar() {
                 <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <UserCircleIcon
-                    aria-hidden="true"
-                    className="h-8 w-8 rounded-full bg-slate-100"
-                  />
+                  {currentUser && currentUser._id && avatar ? (
+                    <img
+                      src={avatar}
+                      alt="User Avatar"
+                      className="h-8 w-8 rounded-full"
+                    />
+                  ) : (
+                    <UserCircleIcon
+                      aria-hidden="true"
+                      className="h-8 w-8 rounded-full bg-slate-100"
+                    />
+                  )}
                 </MenuButton>
               </div>
               <MenuItems
                 transition
                 className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
               >
-                {menuItemsUser.map((item) => {
-                  return (
-                    <MenuItem>
-                      <a
-                        href={item.href}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                      >
-                        {item.name}
-                      </a>
-                    </MenuItem>
-                  );
-                })}
+                {currentUser?._id
+                  ? menuItemsUserLogin.map((item) => {
+                      return (
+                        <MenuItem key={item.name}>
+                          <a
+                            href={item.href}
+                            className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                            onClick={
+                              item.name === "Logout" ? handleLogout : null
+                            }
+                          >
+                            {item.name}
+                          </a>
+                        </MenuItem>
+                      );
+                    })
+                  : menuItemsUser.map((item) => {
+                      return (
+                        <MenuItem key={item.name}>
+                          <a
+                            href={item.href}
+                            className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                          >
+                            {item.name}
+                          </a>
+                        </MenuItem>
+                      );
+                    })}
               </MenuItems>
             </Menu>
           </div>

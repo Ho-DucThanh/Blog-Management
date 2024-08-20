@@ -107,7 +107,7 @@ const ProfileController = {
         avatar,
       });
 
-      const { avatar: ava, ...rest } = newProfile._doc;
+      const { ...rest } = newProfile._doc;
 
       res.status(201).json({
         message: "Profile created successfully",
@@ -125,7 +125,7 @@ const ProfileController = {
     if (!userProfile) {
       return res.status(404).json({ message: "Profile not found" });
     }
-    return res.status(200).json({ userProfile: userProfile });
+    return res.status(200).json({ profile: userProfile });
   },
 };
 

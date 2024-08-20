@@ -11,7 +11,7 @@ const ProfileSlice = createSlice({
   },
   reducers: {
     profileStart: (state) => {
-      state.createProfile.loading = true;
+      state.createProfile.loading = false;
     },
     profileSuccess: (state, action) => {
       state.createProfile.currentUser = action.payload.profile;
@@ -22,10 +22,14 @@ const ProfileSlice = createSlice({
       state.createProfile.loading = false;
       state.createProfile.error = action.payload;
     },
+    resetProfile: (state) => {
+      state.createProfile.currentUser = null;
+      state.createProfile.error = null;
+    },
   },
 });
 
-export const { profileStart, profileSuccess, profileFailure } =
+export const { profileStart, profileSuccess, profileFailure, resetProfile } =
   ProfileSlice.actions;
 
 export default ProfileSlice.reducer;

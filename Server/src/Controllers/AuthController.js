@@ -59,7 +59,7 @@ const AuthController = {
         admin: user.admin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "60s" }
+      { expiresIn: "1d" }
     );
   },
 
@@ -70,7 +70,7 @@ const AuthController = {
         admin: user.admin,
       },
       process.env.JWT_REFRESH_TOKEN,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
   },
 
@@ -122,6 +122,7 @@ const AuthController = {
 
   requestRefreshToken: async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
+    console.log(refreshToken);
 
     if (!refreshToken) {
       return res.status(401).json({ message: "Refresh Token is required" });
@@ -146,7 +147,9 @@ const AuthController = {
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
         });
-        return res.status(200).json({ accessToken: newAccessToken });
+        return res
+          .status(200)
+          .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
       });
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -154,23 +157,17 @@ const AuthController = {
   },
 
   logoutUser: async (req, res) => {
-    try {
-      const refreshToken = req.cookies.refreshToken;
+    return res.status(200).json({ message: "Logout successful" });
+    // try {
+    //   refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
+    //   res.clearCookie("refreshToken");
 
-      if (!refreshToken) {
-        return res.status(400).json({ message: "Refresh Token not found" });
-      }
-
-      res.clearCookie("refreshToken");
-
-      refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-
-      return res.status(200).json({ message: "Logout successful" });
-    } catch (err) {
-      return res
-        .status(500)
-        .json({ message: "Server error", error: err.message });
-    }
+    //   return res.status(200).json({ message: "Logout successful" });
+    // } catch (err) {
+    //   return res
+    //     .status(500)
+    //     .json({ message: "Server error", error: err.message });
+    // }
   },
 };
 

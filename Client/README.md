@@ -11,4 +11,5 @@ Currently, two official plugins are available:
 
 ### docs: https://github.com/tailwindlabs/prettier-plugin-tailwindcss
 
-### npm i axios react-router-dom redux react-redux @reduxjs/toolkit @tailwindcss/forms @heroicons/react react-icons/fa
+### npm i axios jwt-decode react-router-dom redux react-redux @reduxjs/toolkit redux-persist
+### npm i @tailwindcss/forms @heroicons/react react-icons/fa

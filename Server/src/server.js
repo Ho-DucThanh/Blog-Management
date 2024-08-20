@@ -15,7 +15,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Cho phép front-end từ origin cụ thể này
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 app.use("/api/auth", authRouter);

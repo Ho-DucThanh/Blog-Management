@@ -5,9 +5,14 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  logoutStart,
+  logoutSuccess,
+  logoutFailure,
 } from "./AuthSlice";
+import { resetProfile } from "../Home/ProfileSlice";
+import { getProfileUser } from "../Home/Profile_apiRequest";
 
-export const loginUser = async (user, dispatch, setError) => {
+export const loginUser = async (user, dispatch, setError, navigate) => {
   dispatch(loginStart());
   try {
     const response = await fetch("http://localhost:3000/api/auth/login", {
@@ -25,7 +30,11 @@ export const loginUser = async (user, dispatch, setError) => {
 
     console.log(data);
     dispatch(loginSuccess(data));
+
+    getProfileUser(data.user._id, data.accessToken, dispatch, setError);
+
     alert("Login successful");
+    navigate("/");
   } catch (error) {
     setError(error.message);
     dispatch(loginFailure(error.message));
@@ -55,5 +64,32 @@ export const registerUser = async (user, dispatch, navigate, setError) => {
   } catch (error) {
     setError(error.message);
     dispatch(registerFailure(error.message));
+  }
+};
+
+export const logoutUser = async (accessToken, id, dispatch, navigate) => {
+  dispatch(logoutStart());
+  try {
+    const response = await fetch("http://localhost:3000/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to logout");
+    }
+
+    const data = await response.json();
+
+    dispatch(logoutSuccess(data));
+    dispatch(resetProfile());
+    alert("Logout successful");
+    navigate("/");
+  } catch (err) {
+    dispatch(logoutFailure(err.message));
   }
 };
