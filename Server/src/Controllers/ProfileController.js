@@ -21,13 +21,6 @@ const validateSex = (sex) => {
   return validSexes.includes(normalizedSex);
 };
 
-// Check Role
-const validateRole = (role) => {
-  const validRoles = ["student", "tutor"];
-  const normalizedRole = role.toLowerCase();
-  return validRoles.includes(normalizedRole);
-};
-
 const validatePhone = (phone) => {
   const regex = /^0[0-9]{9}$/;
   return regex.test(phone);
@@ -39,11 +32,10 @@ const validateAddress = (address) => {
 
 const ProfileController = {
   createProfile: async (req, res) => {
-    const { user_id, userName, date, sex, role, phone, address, avatar } =
-      req.body;
+    const { user_id, userName, date, sex, phone, address, avatar } = req.body;
 
     // Check null
-    if (!user_id || !userName || !date || !sex || !role || !phone || !address) {
+    if (!user_id || !userName || !date || !sex || !phone || !address) {
       return res
         .status(400)
         .json({ message: "Please complete all information" });
@@ -60,10 +52,6 @@ const ProfileController = {
 
     if (!validateSex(sex)) {
       return res.status(400).json({ message: "Invalid sex" });
-    }
-
-    if (!validateRole(role)) {
-      return res.status(400).json({ message: "Invalid role" });
     }
 
     if (!validatePhone(phone)) {
@@ -101,7 +89,6 @@ const ProfileController = {
         userName,
         date: parsedDate,
         sex,
-        role,
         phone,
         address,
         avatar,
@@ -129,7 +116,7 @@ const ProfileController = {
   },
 
   updateProfile: async (req, res) => {
-    const { userName, date, sex, role, phone, address, avatar } = req.body;
+    const { userName, date, sex, phone, address, avatar } = req.body;
     if (!validateUserName(userName)) {
       return res.status(400).json({ message: "Invalid userName" });
     }
@@ -149,7 +136,6 @@ const ProfileController = {
             userName,
             date: parsedDate,
             sex,
-            role,
             phone,
             address,
             avatar,

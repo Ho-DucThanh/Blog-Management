@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   getProfileUser,
   CreateProfileUser,
@@ -16,7 +16,6 @@ export default function ProfileForm() {
     userName: "",
     date: "",
     sex: "",
-    role: "",
     phone: "",
     address: "",
   });
@@ -37,7 +36,6 @@ export default function ProfileForm() {
               userName: profile.userName || "",
               date: format(new Date(profile.date), "yyyy-MM-dd"),
               sex: profile.sex || "",
-              role: profile.role || "",
               phone: profile.phone || "",
               address: profile.address || "",
             });
@@ -124,15 +122,8 @@ export default function ProfileForm() {
       <SelectInput
         label="Sex"
         id="sex"
-        options={["male", "female", "other"]}
+        options={["male", "female"]}
         value={formData.sex}
-        onChange={handleInputChange}
-      />
-      <SelectInput
-        label="Role"
-        id="role"
-        options={["student", "tutor"]}
-        value={formData.role}
         onChange={handleInputChange}
       />
 
