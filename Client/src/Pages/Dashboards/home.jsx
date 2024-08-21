@@ -1,4 +1,4 @@
-import Navbar from "../../Components/Layout/navbar";
+import Header from "../../Components/Layout/header";
 
 const links = [
   { name: "Open roles", href: "#" },
@@ -16,7 +16,7 @@ const stats = [
 export default function HomeDashBoard() {
   return (
     <>
-      <Navbar />
+      <Header />
       <div className="relative isolate min-h-screen overflow-hidden bg-gray-900 py-24 sm:py-32">
         <img
           alt=""

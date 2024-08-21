@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   getProfileUser,
   CreateProfileUser,
+  updateProfileUser,
 } from "../../Redux/Home/Profile_apiRequest";
 import { format } from "date-fns";
 import Button from "../Common/Button";
@@ -78,13 +79,23 @@ export default function ProfileForm() {
     };
 
     setError("");
-    CreateProfileUser(
-      updateFormData,
-      dispatch,
-      navigate,
-      setError,
-      accessToken,
-    );
+    if (!updateFormData) {
+      updateProfileUser(
+        updateFormData,
+        currentUser._id,
+        accessToken,
+        dispatch,
+        setError,
+      );
+    } else {
+      CreateProfileUser(
+        updateFormData,
+        dispatch,
+        navigate,
+        setError,
+        accessToken,
+      );
+    }
   };
 
   return (

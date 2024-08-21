@@ -127,6 +127,48 @@ const ProfileController = {
     }
     return res.status(200).json({ profile: userProfile });
   },
+
+  updateProfile: async (req, res) => {
+    const { userName, date, sex, role, phone, address, avatar } = req.body;
+    if (!validateUserName(userName)) {
+      return res.status(400).json({ message: "Invalid userName" });
+    }
+    if (!validatePhone(phone)) {
+      return res.status(400).json({ message: "Invalid phone number" });
+    }
+    try {
+      const parsedDate = parse(date, "dd-MM-yyyy", new Date());
+      if (!isValid(parsedDate)) {
+        return res.status(400).json({ message: "Invalid date" });
+      }
+
+      const updateProfile = await ProfileModel.findOneAndUpdate(
+        { user_id: req.params.user_id },
+        {
+          $set: {
+            userName,
+            date: parsedDate,
+            sex,
+            role,
+            phone,
+            address,
+            avatar,
+          },
+        },
+        { new: true }
+      );
+
+      if (!updateProfile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      const { ...rest } = updateProfile._doc;
+      res.status(200).json(rest);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal server error", err });
+    }
+  },
 };
 
 module.exports = ProfileController;

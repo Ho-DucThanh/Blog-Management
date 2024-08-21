@@ -36,7 +36,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
+export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
