@@ -4,7 +4,7 @@ const ProfileModel = require("../Models/ProfileModel");
 const UserController = {
   getAllUsers: async (req, res) => {
     try {
-      const users = await UserModel.find();
+      const users = await UserModel.find({ admin: false });
       return res.status(200).json(users);
     } catch (err) {
       return res.status(500).json({ message: err.message });

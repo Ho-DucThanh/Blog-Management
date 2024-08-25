@@ -3,7 +3,6 @@ import { profileStart, profileSuccess, profileFailure } from "./ProfileSlice";
 export const CreateProfileUser = async (
   profile,
   dispatch,
-  navigate,
   setError,
   accessToken,
 ) => {
@@ -25,8 +24,8 @@ export const CreateProfileUser = async (
 
     console.log(data);
     dispatch(profileSuccess(data));
+    setError("");
     alert("Profile created successfully");
-    navigate("/");
   } catch (error) {
     setError(error.message);
     dispatch(profileFailure(error.message));
@@ -53,7 +52,6 @@ export const getProfileUser = async (
     );
 
     if (response.status === 404) {
-      // Không có profile
       return null;
     }
 
@@ -102,8 +100,34 @@ export const updateProfileUser = async (
     console.log(data);
     dispatch(profileSuccess(data));
     alert("Profile updated successfully");
+    setError("");
   } catch (err) {
     setError(err.message);
-    dispatch(profileFailure(err.message));
+    dispatch(profileFailure("aa" + err.message));
+  }
+};
+
+export const getAllProfiles = async (accessToken, dispatch, setError) => {
+  dispatch(profileStart());
+  try {
+    const response = await fetch("http://localhost:3000/api/getAllProfiles", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load profiles");
+    }
+
+    // console.log(data);
+    dispatch(profileSuccess(data));
+    return data;
+  } catch (error) {
+    setError(error.message);
+    dispatch(profileFailure(error.message));
   }
 };

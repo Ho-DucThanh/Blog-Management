@@ -69,84 +69,89 @@ export default function ProfileForm() {
       return;
     }
 
-    const updateFormData = {
-      ...formData,
-      user_id: currentUser._id,
-      date: format(new Date(formData.date), "dd-MM-yyyy"),
-      avatar: avatar || "",
-    };
+    getProfileUser(currentUser._id, accessToken, dispatch, setError).then(
+      (existingProfile) => {
+        const updateFormData = {
+          ...formData,
+          user_id: currentUser._id,
+          date: format(new Date(formData.date), "dd-MM-yyyy"),
+          avatar: avatar || "",
+        };
 
-    setError("");
-    if (!updateFormData) {
-      updateProfileUser(
-        updateFormData,
-        currentUser._id,
-        accessToken,
-        dispatch,
-        setError,
-      );
-    } else {
-      CreateProfileUser(
-        updateFormData,
-        dispatch,
-        navigate,
-        setError,
-        accessToken,
-      );
-    }
+        if (!existingProfile) {
+          // Nếu profile chưa tồn tại, gọi hàm CreateProfileUser
+          CreateProfileUser(updateFormData, dispatch, setError, accessToken);
+        } else {
+          // Nếu profile đã tồn tại, gọi hàm updateProfileUser
+          updateProfileUser(
+            updateFormData,
+            currentUser._id,
+            accessToken,
+            dispatch,
+            setError,
+          );
+        }
+      },
+    );
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <label className="block text-sm font-medium leading-6 text-blue-700">
-        Hello {currentUser?.email}
-      </label>
+    <div className="flex flex-1 flex-col justify-center lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900">Profile</h2>
+        </div>
+      </div>
 
-      <AvatarInput avatar={avatar} onChange={handleInputChange} />
+      <div className="mt-5 sm:mx-auto sm:w-3/5">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <AvatarInput avatar={avatar} onChange={handleInputChange} />
 
-      <AuthInput
-        label="User Name"
-        id="userName"
-        type="text"
-        value={formData.userName}
-        onChange={handleInputChange}
-      />
-      <AuthInput
-        label="Date of Birth"
-        id="date"
-        type="date"
-        value={formData.date}
-        onChange={handleInputChange}
-      />
+          <AuthInput
+            label="User Name"
+            id="userName"
+            type="text"
+            value={formData.userName}
+            onChange={handleInputChange}
+          />
+          <AuthInput
+            label="Date of Birth"
+            id="date"
+            type="date"
+            value={formData.date}
+            onChange={handleInputChange}
+          />
 
-      <SelectInput
-        label="Sex"
-        id="sex"
-        options={["male", "female"]}
-        value={formData.sex}
-        onChange={handleInputChange}
-      />
+          <SelectInput
+            label="Sex"
+            id="sex"
+            options={["male", "female"]}
+            value={formData.sex}
+            onChange={handleInputChange}
+          />
 
-      <AuthInput
-        label="Phone"
-        id="phone"
-        type="text"
-        value={formData.phone}
-        onChange={handleInputChange}
-      />
-      <AuthInput
-        label="Address"
-        id="address"
-        type="text"
-        value={formData.address}
-        onChange={handleInputChange}
-      />
+          <AuthInput
+            label="Phone"
+            id="phone"
+            type="text"
+            value={formData.phone}
+            onChange={handleInputChange}
+          />
+          <AuthInput
+            label="Address"
+            id="address"
+            type="text"
+            value={formData.address}
+            onChange={handleInputChange}
+          />
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      <Button disabled={loading} type="submit">
-        {loading ? "Loading..." : "Save"}
-      </Button>
-    </form>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <Button disabled={loading} type="submit">
+            {loading ? "Loading..." : "Save"}
+          </Button>
+        </form>
+      </div>
+    </div>
   );
 }
 

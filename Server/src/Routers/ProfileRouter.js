@@ -6,7 +6,9 @@ const verifyToken = require("../Middlewares/verifyUser");
 
 router.post("/profile", verifyToken, ProfileController.createProfile);
 router.get("/profile/:user_id", verifyToken, ProfileController.getProfile);
-router.get("/getAllProfiles", verifyToken, UserController.getAllUsersProfile);
 router.put("/profile/:user_id", verifyToken, ProfileController.updateProfile);
+
+router.get("/getAllProfiles", verifyToken, UserController.getAllUsersProfile);
+router.get("/getAllUsers", verifyToken, UserController.getAllUsers);
 
 module.exports = router;

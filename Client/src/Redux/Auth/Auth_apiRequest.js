@@ -34,7 +34,7 @@ export const loginUser = async (user, dispatch, setError, navigate) => {
     getProfileUser(data.user._id, data.accessToken, dispatch, setError);
 
     alert("Login successful");
-    navigate("/");
+    navigate("/dashboard");
   } catch (error) {
     setError(error.message);
     dispatch(loginFailure(error.message));
@@ -91,5 +91,26 @@ export const logoutUser = async (accessToken, id, dispatch, navigate) => {
     navigate("/");
   } catch (err) {
     dispatch(logoutFailure(err.message));
+  }
+};
+
+export const getListUsers = async (accessToken) => {
+  try {
+    const response = await fetch("http://localhost:3000/api/getAllUsers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to get users");
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
   }
 };
