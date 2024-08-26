@@ -17,10 +17,5 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-const verifyTokenAdmin = (req, res, next) => {
-  verifyToken(req, res, () => {
-    // Code here
-  });
-};
 
 module.exports = verifyToken;

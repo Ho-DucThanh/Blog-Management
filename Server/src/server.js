@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./Config/mongoose");
 const authRouter = require("./Routers/AuthRouter");
 const profileRouter = require("./Routers/ProfileRouter");
+const postRouter = require("./Routers/PostRouter");
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
+app.use("/api/post", postRouter);
 
 connectDB();
 
