@@ -8,7 +8,8 @@ import Header from "./Components/Layout/header";
 import Scroll from "./Components/Common/Scroll";
 import PrivateRoute from "./Components/Layout/PrivateRoute";
 import FooterCom from "./Components/Layout/Footer";
-
+import AdminPrivateRoute from "./Components/Layout/AdminPrivateRoute";
+import CreatePost from "./Pages/Post/createPost";
 function App() {
   return (
     <BrowserRouter>
@@ -21,8 +22,12 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashBoard />} />
         </Route>
+        <Route element={<AdminPrivateRoute />}>
+          <Route path="/create-post" element={<CreatePost />} />
+        </Route>
       </Routes>
-      <FooterCom />
+
+      {/* <FooterCom /> */}
     </BrowserRouter>
   );
 }

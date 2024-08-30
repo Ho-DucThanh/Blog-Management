@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getListUsers } from "../../Redux/Auth/Auth_apiRequest";
 import { getAllProfiles } from "../../Redux/Home/Profile_apiRequest";
@@ -6,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export default function Users() {
   const [error, setError] = useState("");
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const [mergeData, setMergeData] = useState([]);

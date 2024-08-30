@@ -64,8 +64,29 @@ const PostController = {
         { new: true }
       );
       return res.status(200).json({
-        updatePost
+        updatePost,
       });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getAllPost: async (req, res) => {
+    try {
+      const posts = await PostModel.find();
+      return res.status(200).json(posts);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getPost: async (req, res) => {
+    try {
+      const post = await PostModel.findById(req.params.postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      return res.status(200).json(post);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
