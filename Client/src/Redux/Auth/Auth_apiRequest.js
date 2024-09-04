@@ -114,3 +114,27 @@ export const getListUsers = async (accessToken) => {
     console.log(error);
   }
 };
+
+export const deleteUser = async (accessToken, id) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/auth/deleteUser/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete user");
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

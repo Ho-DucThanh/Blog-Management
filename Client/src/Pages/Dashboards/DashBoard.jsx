@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../../Components/Layout/DashSidebar";
-import Users from "../../Components/Layout/Users";
-import Course from "../../Components/Layout/Course";
+import Users from "../../Components/Layout/Admin/DashUsers";
+import Posts from "../../Components/Layout/Admin/DashPosts";
 import ProfileForm from "../../Components/Forms/ProfileForm";
 
 export default function DashBoard() {
@@ -21,7 +21,7 @@ export default function DashBoard() {
         <DashSidebar />
       </div>
       <div className="w-full p-4">
-        {tab === "courses" && <Course />}
+        {tab === "posts" && <Posts />}
         {tab === "users" && <Users />}
         {tab === "profile" && <ProfileForm />}
       </div>

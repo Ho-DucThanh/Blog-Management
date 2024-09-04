@@ -17,5 +17,16 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+const verifyTokenAndAdmin = (req, res, next) => {
+  verifyToken(req, res, () => {
+    if (req.user.admin) {
+      next();
+    } else {
+      return res
+        .status(403)
+        .json({ message: "You are not allowed to delete this user" });
+    }
+  });
+};
 
-module.exports = verifyToken;
+module.exports = { verifyToken, verifyTokenAndAdmin };

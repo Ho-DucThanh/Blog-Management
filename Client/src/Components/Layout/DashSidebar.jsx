@@ -6,7 +6,6 @@ import {
   HiOutlineUserGroup,
   HiAnnotation,
   HiChartPie,
-  HiHome,
   HiChartBar,
 } from "react-icons/hi";
 
@@ -38,21 +37,15 @@ export default function DashSidebar() {
     <Sidebar className="md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
-          {currentUser && currentUser.admin && (
+          {currentUser && (
             <Link to="/dashboard?tab=dash">
               <Sidebar.Item
                 active={tab === "dash" || !tab}
                 icon={HiChartPie}
                 as="div"
+                className="transition-colors duration-200 hover:bg-gray-500"
               >
                 DashBoard
-              </Sidebar.Item>
-            </Link>
-          )}
-          {!currentUser.admin && (
-            <Link to="/dashboard?tab=home">
-              <Sidebar.Item active={tab === "home"} icon={HiHome} as="div">
-                Home
               </Sidebar.Item>
             </Link>
           )}
@@ -64,49 +57,31 @@ export default function DashSidebar() {
               label={currentUser.admin ? "Admin" : "User"}
               labelColor="dark"
               as="div"
+              className="transition-colors duration-200 hover:bg-gray-500"
             >
               Profile
             </Sidebar.Item>
           </Link>
 
-          {!currentUser.admin && (
-            <Link to="/dashboard?tab=my-course">
-              <Sidebar.Item
-                active={tab === "my-course"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                My Course
-              </Sidebar.Item>
-            </Link>
-          )}
-
-          {!currentUser.admin && (
-            <Link to="/dashboard?tab=chat">
-              <Sidebar.Item active={tab === "chat"} icon={HiChartBar} as="div">
-                Chat
-              </Sidebar.Item>
-            </Link>
-          )}
-
-          {currentUser.admin && (
-            <Link to="/dashboard?tab=courses">
-              <Sidebar.Item
-                active={tab === "courses"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                Courses
-              </Sidebar.Item>
-            </Link>
-          )}
+          {/* Admin */}
           {currentUser.admin && (
             <>
+              <Link to="/dashboard?tab=posts">
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={HiDocumentText}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  Posts
+                </Sidebar.Item>
+              </Link>
               <Link to="/dashboard?tab=users">
                 <Sidebar.Item
                   active={tab === "users"}
                   icon={HiOutlineUserGroup}
                   as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
                 >
                   Users
                 </Sidebar.Item>
@@ -116,15 +91,54 @@ export default function DashSidebar() {
                   active={tab === "comments"}
                   icon={HiAnnotation}
                   as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
                 >
                   Comments
                 </Sidebar.Item>
               </Link>
             </>
           )}
+
+          {/* User */}
+          {!currentUser.admin && (
+            <>
+              <Link to="/dashboard?tab=posts">
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={HiDocumentText}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  My Posts
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/dashboard?tab=my-comment">
+                <Sidebar.Item
+                  active={tab === "my-comment"}
+                  icon={HiAnnotation}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  My Comments
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=chat">
+                <Sidebar.Item
+                  active={tab === "chat"}
+                  icon={HiChartBar}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  Chat
+                </Sidebar.Item>
+              </Link>
+            </>
+          )}
+
           <Sidebar.Item
             icon={HiArrowSmRight}
-            className="cursor-pointer"
+            className="cursor-pointer transition-colors duration-200 hover:bg-gray-500"
             onClick={handleLogout}
           >
             Sign Out

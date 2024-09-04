@@ -107,8 +107,7 @@ export const updateProfileUser = async (
   }
 };
 
-export const getAllProfiles = async (accessToken, dispatch, setError) => {
-  dispatch(profileStart());
+export const getAllProfiles = async (accessToken, setError) => {
   try {
     const response = await fetch("http://localhost:3000/api/getAllProfiles", {
       method: "GET",
@@ -123,11 +122,8 @@ export const getAllProfiles = async (accessToken, dispatch, setError) => {
       throw new Error(data.message || "Failed to load profiles");
     }
 
-    // console.log(data);
-    dispatch(profileSuccess(data));
     return data;
   } catch (error) {
     setError(error.message);
-    dispatch(profileFailure(error.message));
   }
 };

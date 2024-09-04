@@ -14,9 +14,7 @@ const ProfileController = {
     const { user_id, userName, date, sex, phone, address, avatar } = req.body;
 
     // Check null
-    if (
-      ![user_id, userName, date, sex, phone, address, avatar].every(Boolean)
-    ) {
+    if (![user_id, userName, date, sex, phone, address].every(Boolean)) {
       return res
         .status(400)
         .json({ message: "Please complete all information" });

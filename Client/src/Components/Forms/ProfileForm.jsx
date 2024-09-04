@@ -105,6 +105,10 @@ export default function ProfileForm() {
 
       <div className="mt-5 sm:mx-auto sm:w-3/5">
         <form onSubmit={handleSubmit} className="space-y-3">
+          <span className="rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-2 py-1 text-white">
+            Email
+          </span>
+          <span className="font-bold text-blue-600"> {currentUser.email}</span>
           <AvatarInput avatar={avatar} onChange={handleInputChange} />
 
           <AuthInput
@@ -165,7 +169,7 @@ const AvatarInput = ({ avatar, onChange }) => (
         <img
           src={avatar}
           alt="Selected Avatar"
-          className="h-12 w-12 rounded-full"
+          className="h-12 w-12 rounded-full object-cover"
         />
       ) : (
         <UserCircleIcon

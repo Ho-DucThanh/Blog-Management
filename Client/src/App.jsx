@@ -6,10 +6,10 @@ import HomeDashBoard from "./Pages/Dashboards/home";
 import DashBoard from "./Pages/Dashboards/DashBoard";
 import Header from "./Components/Layout/header";
 import Scroll from "./Components/Common/Scroll";
-import PrivateRoute from "./Components/Layout/PrivateRoute";
-import FooterCom from "./Components/Layout/Footer";
-import AdminPrivateRoute from "./Components/Layout/AdminPrivateRoute";
+import PrivateRoute from "./Components/Layout/User/PrivateRoute";
 import CreatePost from "./Pages/Post/createPost";
+import ViewPost from "./Pages/Post/ViewPost";
+import UpdatePost from "./Pages/Post/UpdatePost";
 function App() {
   return (
     <BrowserRouter>
@@ -21,13 +21,11 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashBoard />} />
-        </Route>
-        <Route element={<AdminPrivateRoute />}>
           <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/update-post/:postId" element={<UpdatePost />} />
         </Route>
+        <Route path="/post/:postSlug" element={<ViewPost />} />
       </Routes>
-
-      {/* <FooterCom /> */}
     </BrowserRouter>
   );
 }

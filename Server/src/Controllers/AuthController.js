@@ -2,6 +2,7 @@ const UserModel = require("../Models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const ProfileModel = require("../Models/ProfileModel");
 
 dotenv.config();
 
@@ -175,6 +176,19 @@ const AuthController = {
     //     .status(500)
     //     .json({ message: "Server error", error: err.message });
     // }
+  },
+
+  deleteUser: async (req, res) => {
+    try {
+      const user = await UserModel.findByIdAndDelete(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      await ProfileModel.findOneAndDelete({ user_id: req.params.id });
+      res.status(200).json({ message: "User deleted successfully" });
+    } catch (err) {
+      res.status(500).json(err.message);
+    } 
   },
 };
 

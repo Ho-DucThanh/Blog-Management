@@ -1,28 +1,42 @@
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import { useState, useEffect } from "react";
-import { createPost_Api } from "../../Redux/Post/Post_apiRequest";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { updatePost } from "../../Redux/Post/Post_apiRequest";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreatePost() {
+export default function UpdatePost() {
   const [formData, setFormData] = useState({});
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { postId } = useParams();
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const { quill, quillRef } = useQuill();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (quill) {
-      quill.on("text-change", () => {
-        setFormData((prevData) => ({
-          ...prevData,
-          content: quill.root.innerHTML,
-        }));
-      });
+    const fetchPost = async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/post/getPost?postId=${postId}`,
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log(data);
+      setFormData(data.posts[0]);
+      if (data.posts[0].image) {
+        setImage(data.posts[0].image);
+      }
+    };
+    fetchPost();
+  }, [postId]);
+
+  useEffect(() => {
+    if (quill && formData.content) {
+      quill.clipboard.dangerouslyPasteHTML(formData.content);
     }
-  }, [quill]);
+  }, [quill, formData.content]);
 
   const handleInputChange = (e) => {
     const { id, value, files } = e.target;
@@ -52,19 +66,20 @@ export default function CreatePost() {
       return;
     }
 
-    await createPost_Api(formData, accessToken, dispatch, navigate, setError);
+    await updatePost(postId, currentUser._id, formData, accessToken, navigate);
   };
 
   return (
     <div className="mx-auto min-h-screen max-w-3xl p-3">
-      <h1 className="my-7 text-center text-3xl font-semibold">Create a post</h1>
+      <h1 className="my-7 text-center text-3xl font-semibold">Update Post</h1>
       {error && <div className="mb-4 bg-red-100 p-3 text-red-500">{error}</div>}
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col justify-between gap-2 sm:flex-row">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row">
           <input
             type="text"
             placeholder="Title"
             id="title"
+            value={formData.title || ""}
             required
             className="flex-1 rounded border border-gray-300 p-2"
             onChange={handleInputChange}
@@ -72,6 +87,7 @@ export default function CreatePost() {
           <select
             id="category"
             className="rounded border border-gray-300"
+            value={formData.category || "uncategorized"}
             onChange={handleInputChange}
           >
             <option value="uncategorized">Select a category</option>
@@ -99,7 +115,7 @@ export default function CreatePost() {
           type="submit"
           className="rounded bg-purple-600 px-4 py-2 font-bold text-white hover:bg-purple-700"
         >
-          Create
+          Update
         </button>
       </form>
     </div>

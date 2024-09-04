@@ -1,43 +1,41 @@
-import { useDispatch, useSelector } from "react-redux";
-import { getListUsers } from "../../Redux/Auth/Auth_apiRequest";
-import { getAllProfiles } from "../../Redux/Home/Profile_apiRequest";
+import { useSelector } from "react-redux";
+import { getAllProfiles } from "../../../Redux/Home/Profile_apiRequest";
 import { useEffect, useState } from "react";
+import { deleteUser } from "../../../Redux/Auth/Auth_apiRequest";
 
 export default function Users() {
   const [error, setError] = useState("");
-  const dispatch = useDispatch();
+
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
-  const [mergeData, setMergeData] = useState([]);
+  const [profiles, setProfiles] = useState([]);
 
   useEffect(() => {
-    const fetchUsersAndProfiles = async () => {
+    const fetchProfiles = async () => {
       try {
-        const usersData = await getListUsers(accessToken);
-        const profileData = await getAllProfiles(
-          accessToken,
-          dispatch,
-          setError,
-        );
-        console.log(usersData);
-
+        const profileData = await getAllProfiles(accessToken, setError);
+        setProfiles(profileData);
         console.log(profileData);
-
-        const mergedData = usersData.map((user) => {
-          const userProfile = profileData.find(
-            (profile) => profile.user_id === user._id,
-          );
-          return {
-            ...user,
-            profile: userProfile || {},
-          };
-        });
-        setMergeData(mergedData);
       } catch (err) {
         setError(err.message);
       }
     };
-    fetchUsersAndProfiles();
+    fetchProfiles();
   }, [accessToken]);
+
+  const handleDeleteUser = async (userId) => {
+    const isConfirmed = window.confirm(
+      `Bạn có chắc chắn muốn xóa người dùng này không?`,
+    );
+    if (isConfirmed) {
+      try {
+        await deleteUser(accessToken, userId);
+        setProfiles(profiles.filter((profile) => profile.user_id !== userId));
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+  };
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
@@ -61,34 +59,35 @@ export default function Users() {
           </tr>
         </thead>
         <tbody>
-          {currentUser.admin && mergeData.length > 0 ? (
-            mergeData.map((user) => (
+          {currentUser.admin && profiles.length > 0 ? (
+            profiles.map((profile) => (
               <tr
-                key={user._id}
+                key={profile.user_id}
                 className="border-b odd:bg-white even:bg-gray-50 dark:border-gray-700 odd:dark:bg-gray-900 even:dark:bg-gray-800"
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
-                  {user.email}
+                  {profile.email}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
-                  {user.profile.userName}
+                  {profile.userName}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
-                  {user.profile.sex}
+                  {profile.sex}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
-                  {user.profile.phone}
+                  {profile.phone}
                 </td>
 
                 <td className="px-6 py-4">
                   <a
                     href="#"
-                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                    className="font-medium text-red-600 hover:underline dark:text-red-500"
+                    onClick={() => handleDeleteUser(profile.user_id)}
                   >
-                    Edit
+                    Delete
                   </a>
                 </td>
               </tr>
