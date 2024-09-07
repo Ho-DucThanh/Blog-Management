@@ -38,7 +38,7 @@ export default function ViewPost() {
     const fetchRecentPosts = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/post/getPost?limit=4`,
+          `http://localhost:3000/api/post/getPost?limit=6`,
         );
         const data = await response.json();
         if (response.ok) {
@@ -117,11 +117,8 @@ export default function ViewPost() {
         className="post-content mx-auto w-full max-w-2xl p-3"
         dangerouslySetInnerHTML={{ __html: post && post.content }}
       ></div>
-      {/* <div className='max-w-4xl mx-auto w-full'>
-        <CallToAction />
-      </div>
-      <CommentSection postId={post._id} /> */}
-      {/* <CommentSection /> */}
+
+      {post && <CommentSection postId={post._id} />}
 
       <div className="mb-5 flex flex-col items-center justify-center">
         <h1 className="mt-5 text-xl">Recent articles</h1>

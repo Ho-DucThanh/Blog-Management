@@ -10,5 +10,10 @@ router.put("/profile/:user_id", verifyToken, ProfileController.updateProfile);
 
 router.get("/getAllProfiles", verifyToken, UserController.getAllUsersProfile);
 router.get("/getAllUsers", verifyToken, UserController.getAllUsers);
+router.get(
+  "/getUserProfileById/:id",
+  verifyToken,
+  UserController.getUserProfileById
+);
 
 module.exports = router;

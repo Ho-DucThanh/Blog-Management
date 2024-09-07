@@ -11,11 +11,11 @@ const UserController = {
     }
   },
 
-  getUser: async (req, res) => {
+  getUserProfileById: async (req, res) => {
     try {
-      const user = await UserModel.findById(req.params.id);
+      const user = await ProfileModel.findOne({ user_id: req.params.id });  
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "UserProfile not found" });
       }
       return res.status(200).json(user);
     } catch (err) {

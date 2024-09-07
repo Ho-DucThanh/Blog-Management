@@ -7,7 +7,7 @@ const connectDB = require("./Config/mongoose");
 const authRouter = require("./Routers/AuthRouter");
 const profileRouter = require("./Routers/ProfileRouter");
 const postRouter = require("./Routers/PostRouter");
-
+const commentRouter = require("./Routers/CommentRouter");
 dotenv.config();
 
 const app = express();
@@ -27,6 +27,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
 app.use("/api/post", postRouter);
+app.use("/api/comment", commentRouter);
 
 connectDB();
 

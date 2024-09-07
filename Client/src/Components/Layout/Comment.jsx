@@ -1,64 +1,73 @@
-import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaThumbsUp } from "react-icons/fa";
-import { Button, Textarea } from "flowbite-react";
+import { useSelector } from "react-redux";
+import { editComment } from "../../Redux/Commet/Comment_apiRequest";
+import moment from "moment";
 
-export default function Comment() {
-  // Dữ liệu mẫu cho comment và user
-  const comment = {
-    _id: "1",
-    content: "This is a sample comment.",
-    createdAt: "2023-09-01T12:00:00Z",
-    userId: "123",
-    likes: ["456"],
-    numberOfLikes: 1,
-  };
-
-  const user = {
-    _id: "123",
-    username: "sampleuser",
-    profilePicture: "https://via.placeholder.com/150",
-  };
-
-  const currentUser = {
-    _id: "123", // Đặt ID của người dùng hiện tại giống với ID của comment.userId để kiểm tra quyền sửa và xóa
-    isAdmin: false,
-  };
-
+export default function Comment({ comment, onLike, onEdit, onDelete }) {
+  const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
+  const [error, setError] = useState(null);
+  const { accessToken, currentUser } = useSelector((state) => state.auth.login);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/getUserProfileById/${comment.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setUser(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    fetchUserProfile();
+  }, [comment]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setEditedContent(comment.content);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Save edited content:", editedContent);
-  };
-
-  const handleLike = () => {
-    console.log("Like comment with ID:", comment._id);
-  };
-
-  const handleDelete = () => {
-    console.log("Delete comment with ID:", comment._id);
+  const handleSave = async () => {
+    try {
+      const updatedComment = await editComment(
+        accessToken,
+        comment._id,
+        editedContent,
+      );
+      if (updatedComment) {
+        onEdit(comment._id, updatedComment); // Sử dụng updatedComment từ server
+        setIsEditing(false);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
-    <div className="flex border-b p-4 text-sm dark:border-gray-600">
+    <div className="flex border-b p-4 text-sm dark:border-gray-200">
       <div className="mr-3 flex-shrink-0">
         <img
           className="h-10 w-10 rounded-full bg-gray-200"
-          src={user.profilePicture}
-          alt={user.username}
+          src={user.avatar}
+          alt={user.userName}
         />
       </div>
       <div className="flex-1">
         <div className="mb-1 flex items-center">
           <span className="mr-1 truncate text-xs font-bold">
-            {user ? `@${user.username}` : "anonymous user"}
+            {user ? `@${user.userName}` : "anonymous user"}
           </span>
           <span className="text-xs text-gray-500">
             {moment(comment.createdAt).fromNow()}
@@ -66,38 +75,35 @@ export default function Comment() {
         </div>
         {isEditing ? (
           <>
-            <Textarea
-              className="mb-2"
+            <textarea
+              className="mb-2 w-full resize-none rounded-lg border border-gray-300 p-2 text-sm text-gray-900 focus:border-blue-300 focus:ring-blue-300"
               value={editedContent}
               onChange={(e) => setEditedContent(e.target.value)}
             />
             <div className="flex justify-end gap-2 text-xs">
-              <Button
+              <button
                 type="button"
-                size="sm"
-                gradientDuoTone="purpleToBlue"
                 onClick={handleSave}
+                className="py-2 text-blue-400"
               >
                 Save
-              </Button>
-              <Button
+              </button>
+              <button
                 type="button"
-                size="sm"
-                gradientDuoTone="purpleToBlue"
-                outline
+                className="py-2 text-red-400"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
-              </Button>
+              </button>
             </div>
           </>
         ) : (
           <>
             <p className="pb-2 text-gray-500">{comment.content}</p>
-            <div className="flex max-w-fit items-center gap-2 border-t pt-2 text-xs dark:border-gray-700">
+            <div className="flex max-w-fit items-center gap-2 border-t pt-2 text-xs dark:border-gray-200">
               <button
                 type="button"
-                onClick={handleLike}
+                onClick={() => onLike(comment._id)}
                 className={`text-gray-400 hover:text-blue-500 ${
                   currentUser &&
                   comment.likes.includes(currentUser._id) &&
@@ -113,7 +119,7 @@ export default function Comment() {
                     (comment.numberOfLikes === 1 ? "like" : "likes")}
               </p>
               {currentUser &&
-                (currentUser._id === comment.userId || currentUser.isAdmin) && (
+                (currentUser._id === comment.user_id || currentUser.admin) && (
                   <>
                     <button
                       type="button"
@@ -124,7 +130,7 @@ export default function Comment() {
                     </button>
                     <button
                       type="button"
-                      onClick={handleDelete}
+                      onClick={() => onDelete(comment._id)}
                       className="text-gray-400 hover:text-red-500"
                     >
                       Delete
@@ -135,6 +141,7 @@ export default function Comment() {
           </>
         )}
       </div>
+      {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
     </div>
   );
 }
