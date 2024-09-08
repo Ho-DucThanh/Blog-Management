@@ -14,7 +14,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { logoutUser } from "../../Redux/Auth/Auth_apiRequest";
 
 const navigation = [
-  { name: "Home", href: "/dashboard", current: false },
+  { name: "Home", href: "/", current: false },
   { name: "Post", href: "/dashboard", current: false },
   { name: "About", href: "#", current: false },
 ];

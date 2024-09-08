@@ -1,79 +1,81 @@
-const links = [
-  { name: "Open roles", href: "#" },
-  { name: "Internship program", href: "#" },
-  { name: "Our values", href: "#" },
-  { name: "Meet our leadership", href: "#" },
-];
-const stats = [
-  { name: "Offices worldwide", value: "12" },
-  { name: "Full-time colleagues", value: "300+" },
-  { name: "Hours per week", value: "40" },
-  { name: "Paid time off", value: "Unlimited" },
-];
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import PostCard from "../../Components/Layout/PostCard";
+import { useEffect, useState } from "react";
 
 export default function HomeDashBoard() {
+  const [posts, setPosts] = useState([]);
+  const { accessToken } = useSelector((state) => state.auth.login);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/post/getPost?limit=4`,
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setPosts(data.posts);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPosts();
+  }, [accessToken]);
   return (
-    <div className="relative isolate min-h-screen overflow-hidden bg-gray-900 py-24 sm:py-32">
-      <img
-        alt=""
-        src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-y=.8&w=2830&h=1500&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-right md:object-center"
-      />
-      <div
-        aria-hidden="true"
-        className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
-      >
-        <div
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-          className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-        />
-      </div>
-      <div
-        aria-hidden="true"
-        className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
-      >
-        <div
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-          className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-        />
-      </div>
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-            Work with us
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-300">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat aliqua.
+    <div className="relative isolate min-h-screen overflow-hidden py-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-2xl font-bold sm:text-3xl lg:text-5xl">
+            Welcome to My Blog
+          </h1>
+          <p className="text-sm text-gray-500 sm:text-base">
+            Here, you will find many articles and guides on topics such as
+            technology, life, travel, culture and many other topics...
           </p>
+          <Link
+            to="/search"
+            className="text-sm font-bold text-teal-500 hover:underline sm:text-base"
+          >
+            View all posts
+          </Link>
         </div>
-        <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10">
-            {links.map((link) => (
-              <a key={link.name} href={link.href}>
-                {link.name} <span aria-hidden="true">&rarr;</span>
-              </a>
-            ))}
+
+        <div className="relative my-8 sm:my-10">
+          <div className="aspect-w-16 aspect-h-9 overflow-hidden rounded-lg">
+            <img
+              src="https://bizflyportal.mediacdn.vn/bizflyportal/1396/2428/2021/04/26/17/17/blo16194106288091.jpg"
+              alt="Blog Banner"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+              <h2 className="px-4 text-center text-xl font-bold text-white sm:text-2xl md:text-3xl lg:text-4xl">
+                Share your blog with everyone
+              </h2>
+            </div>
           </div>
-          <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.name} className="flex flex-col-reverse">
-                <dt className="text-base leading-7 text-gray-300">
-                  {stat.name}
-                </dt>
-                <dd className="text-2xl font-bold leading-9 tracking-tight text-white">
-                  {stat.value}
-                </dd>
+        </div>
+
+        <div className="mb-5 flex flex-col items-center justify-center">
+          {posts && posts.length > 0 && (
+            <div className="flex flex-col gap-6">
+              <h2 className="text-center text-2xl font-semibold">
+                Recent Posts
+              </h2>
+              <div className="mt-5 flex flex-wrap justify-center gap-5">
+                {posts.map((post) => (
+                  <PostCard key={post._id} post={post} />
+                ))}
               </div>
-            ))}
-          </dl>
+              <Link
+                to={"/search"}
+                className="text-center text-lg text-teal-500 hover:underline"
+              >
+                View all posts
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
