@@ -20,7 +20,7 @@ export default function UpdatePost() {
         `http://localhost:3000/api/post/getPost?postId=${postId}`,
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("Cannot get post");
       }
       const data = await response.json();
       console.log(data);
@@ -90,7 +90,6 @@ export default function UpdatePost() {
             value={formData.category || "uncategorized"}
             onChange={handleInputChange}
           >
-            <option value="uncategorized">Select a category</option>
             <option value="Đời sống">Đời sống</option>
             <option value="Công Nghệ">Công Nghệ</option>
             <option value="Sức khỏe">Sức khỏe</option>

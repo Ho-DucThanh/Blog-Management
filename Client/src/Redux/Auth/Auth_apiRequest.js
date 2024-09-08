@@ -88,7 +88,7 @@ export const logoutUser = async (accessToken, id, dispatch, navigate) => {
     dispatch(logoutSuccess(data));
     dispatch(resetProfile());
     alert("Logout successful");
-    navigate("/");
+    navigate("/login");
   } catch (err) {
     dispatch(logoutFailure(err.message));
   }

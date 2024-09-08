@@ -66,16 +66,6 @@ export default function DashSidebar() {
           {/* Admin */}
           {currentUser.admin && (
             <>
-              <Link to="/dashboard?tab=posts">
-                <Sidebar.Item
-                  active={tab === "posts"}
-                  icon={HiDocumentText}
-                  as="div"
-                  className="transition-colors duration-200 hover:bg-gray-500"
-                >
-                  Posts
-                </Sidebar.Item>
-              </Link>
               <Link to="/dashboard?tab=users">
                 <Sidebar.Item
                   active={tab === "users"}
@@ -86,6 +76,18 @@ export default function DashSidebar() {
                   Users
                 </Sidebar.Item>
               </Link>
+
+              <Link to="/dashboard?tab=posts">
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={HiDocumentText}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  Posts
+                </Sidebar.Item>
+              </Link>
+
               <Link to="/dashboard?tab=comments">
                 <Sidebar.Item
                   active={tab === "comments"}
@@ -113,9 +115,9 @@ export default function DashSidebar() {
                 </Sidebar.Item>
               </Link>
 
-              <Link to="/dashboard?tab=my-comment">
+              <Link to="/dashboard?tab=comments">
                 <Sidebar.Item
-                  active={tab === "my-comment"}
+                  active={tab === "comments"}
                   icon={HiAnnotation}
                   as="div"
                   className="transition-colors duration-200 hover:bg-gray-500"

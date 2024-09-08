@@ -1,25 +1,52 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { IoMdAdd } from "react-icons/io";
-import { getAllPost, deletePost } from "../../../Redux/Post/Post_apiRequest";
 import { getAllProfiles } from "../../../Redux/Home/Profile_apiRequest";
+import {
+  getAllComments,
+  deleteComment,
+} from "../../../Redux/Commet/Comment_apiRequest";
+import { getAllPost } from "../../../Redux/Post/Post_apiRequest";
 
-export default function Posts() {
+export default function Comments() {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const [profiles, setProfiles] = useState([]);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        let comments;
+        if (currentUser.admin) {
+          comments = await getAllComments(accessToken);
+        } else {
+          const response = await fetch(
+            `http://localhost:3000/api/comment/getComments?userId=${currentUser._id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            },
+          );
+          comments = await response.json();
+        }
+        console.log("Fetched Comments:", comments);
+        setData(comments.comments || comments);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
     const fetchPosts = async () => {
       try {
         let posts;
+
         if (currentUser.admin) {
           posts = await getAllPost(accessToken);
         } else {
           const response = await fetch(
-            `http://localhost:3000/api/post/getPost?userId=${currentUser._id}`,
+            `http://localhost:3000/api/comment/getPostWithUserComment?userId=${currentUser._id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -29,7 +56,8 @@ export default function Posts() {
           posts = await response.json();
         }
 
-        setData(posts.posts || posts);
+        console.log("Fetched posts:", posts);
+        setPosts(posts.posts || posts);
       } catch (err) {
         setError(err.message);
       }
@@ -45,25 +73,32 @@ export default function Posts() {
       }
     };
 
+    fetchComments();
     fetchPosts();
     fetchProfiles();
   }, [accessToken, currentUser]);
 
-  const getUsernameForPost = (post) => {
+  const getUsernameForComment = (comment) => {
     const matchingProfile = profiles.find(
-      (profile) => profile.user_id === post.user_id,
+      (profile) => profile.user_id === comment.user_id,
     );
     return matchingProfile ? matchingProfile.userName : "Admin";
   };
 
-  const handleDeletePost = async (postId, userId) => {
+  const getPostTitleForComment = (comment) => {
+    const matchingPost = posts.find((post) => post._id === comment.postId);
+    console.log(matchingPost);
+    return matchingPost ? matchingPost.title : "Post";
+  };
+
+  const handleDeleteComment = async (commentId) => {
     const isConfirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa bài viết này không?`,
+      `Bạn có chắc chắn muốn xóa comment này không?`,
     );
     if (isConfirmed) {
       try {
-        await deletePost(postId, userId, accessToken);
-        setData(data.filter((post) => post._id !== postId));
+        await deleteComment(accessToken, commentId);
+        setData(data.filter((comment) => comment._id !== commentId));
       } catch (err) {
         setError(err.message);
       }
@@ -75,22 +110,19 @@ export default function Posts() {
       <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
         <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" className="px-16 py-3">
-              <span className="sr-only">Image</span>
-            </th>
             {currentUser.admin && (
               <th scope="col" className="px-6 py-3">
                 User Name
               </th>
             )}
             <th scope="col" className="px-6 py-3">
-              Title
+              Post Title
             </th>
             <th scope="col" className="px-6 py-3">
-              Category
+              Comment
             </th>
             <th scope="col" className="px-6 py-3">
-              Edit
+              Date
             </th>
             <th scope="col" className="px-6 py-3">
               Delete
@@ -99,42 +131,30 @@ export default function Posts() {
         </thead>
         <tbody>
           {currentUser && data.length > 0 ? (
-            data.map((post) => (
+            data.map((comment) => (
               <tr
-                key={post._id}
+                key={comment._id}
                 className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
               >
-                <td className="p-4">
-                  <img
-                    src={post.image}
-                    className="max-h-full w-16 max-w-full object-cover md:w-32"
-                    alt=""
-                  />
-                </td>
                 {currentUser.admin && (
                   <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    {getUsernameForPost(post)}
+                    {getUsernameForComment(comment)}
                   </td>
                 )}
                 <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                  {post.title}
+                  {getPostTitleForComment(comment)}
                 </td>
                 <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                  {post.category}
+                  {comment.content}
                 </td>
-                <td className="px-6 py-4">
-                  <a
-                    href={`/update-post/${post._id}`}
-                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
-                    Edit
-                  </a>
+                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                  {new Date(comment.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4">
                   <a
                     href="#"
                     className="font-medium text-red-600 hover:underline dark:text-red-500"
-                    onClick={() => handleDeletePost(post._id, post.user_id)}
+                    onClick={() => handleDeleteComment(comment._id)}
                   >
                     Remove
                   </a>
@@ -144,20 +164,12 @@ export default function Posts() {
           ) : (
             <tr>
               <td colSpan="5" className="px-6 py-4 text-center">
-                No posts found
+                No comments found
               </td>
             </tr>
           )}
         </tbody>
       </table>
-
-      <Link
-        to="/create-post"
-        className="fixed bottom-10 right-10 flex items-center justify-center rounded-full bg-gray-400 p-4 text-white shadow-lg transition-all duration-300 hover:bg-blue-400"
-        title="Add Post"
-      >
-        <IoMdAdd className="text-2xl" />
-      </Link>
     </div>
   );
 }

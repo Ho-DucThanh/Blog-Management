@@ -6,7 +6,7 @@ import HomeDashBoard from "./Pages/Dashboards/home";
 import DashBoard from "./Pages/Dashboards/DashBoard";
 import Header from "./Components/Layout/header";
 import Scroll from "./Components/Common/Scroll";
-import PrivateRoute from "./Components/Layout/User/PrivateRoute";
+import PrivateRoute from "./Components/Layout/PrivateRoute";
 import CreatePost from "./Pages/Post/createPost";
 import ViewPost from "./Pages/Post/ViewPost";
 import UpdatePost from "./Pages/Post/UpdatePost";

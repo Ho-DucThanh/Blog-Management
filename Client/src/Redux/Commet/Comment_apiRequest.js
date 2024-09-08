@@ -139,3 +139,23 @@ export const likeComment = async (accessToken, commentId) => {
     console.log(error);
   }
 };
+
+export const getAllComments = async (accessToken) => {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/comment/getAllComments",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to get comments");
+    }
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};

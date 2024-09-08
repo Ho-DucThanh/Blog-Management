@@ -13,6 +13,7 @@ export default function CreatePost() {
   const navigate = useNavigate();
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const { quill, quillRef } = useQuill();
+
   useEffect(() => {
     if (quill) {
       quill.on("text-change", () => {
@@ -51,7 +52,6 @@ export default function CreatePost() {
       setError("Please provide all required fields");
       return;
     }
-
     await createPost_Api(formData, accessToken, dispatch, navigate, setError);
   };
 
@@ -74,7 +74,6 @@ export default function CreatePost() {
             className="rounded border border-gray-300"
             onChange={handleInputChange}
           >
-            <option value="uncategorized">Select a category</option>
             <option value="Đời sống">Đời sống</option>
             <option value="Công Nghệ">Công Nghệ</option>
             <option value="Sức khỏe">Sức khỏe</option>
