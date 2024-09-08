@@ -1,4 +1,5 @@
 const CommentModel = require("../Models/CommentModel");
+const PostModel = require("../Models/PostModel");
 
 const CommentController = {
   createComment: async (req, res) => {
@@ -19,18 +20,6 @@ const CommentController = {
     try {
       const { postId } = req.params;
       const comments = await CommentModel.find({ postId }).sort({
-        createdAt: -1,
-      });
-      res.status(200).json(comments);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  getCommentsByUserId: async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const comments = await CommentModel.find({ userId }).sort({
         createdAt: -1,
       });
       res.status(200).json(comments);
@@ -103,12 +92,48 @@ const CommentController = {
       const startIndex = req.query.startIndex || 0;
       const limit = req.query.limit || 9;
       const sortDirection = req.query.sort === "desc" ? -1 : 1;
-      const comments = await CommentModel.find()
+      const comments = await CommentModel.find({
+        ...(req.query.userId && { user_id: req.query.userId }),
+        ...(req.query.postId && { postId: req.query.postId }),
+        ...(req.query.searchTerm && {
+          $or: [{ content: { $regex: req.query.searchTerm, $options: "i" } }],
+        }),
+      })
         .sort({ createdAt: sortDirection })
         .skip(startIndex)
         .limit(limit);
       const totalComments = await CommentModel.countDocuments();
       res.status(200).json({ comments, totalComments });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  getAllComments: async (req, res) => {
+    try {
+      const comments = await CommentModel.find();
+      res.status(200).json(comments);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  getPostWithUserComment: async (req, res) => {
+    try {
+      const { userId } = req.query;
+
+      // Tìm tất cả các comment của user
+      const userComments = await CommentModel.find({ user_id: userId });
+
+      // Lấy tất cả postId duy nhất từ các comment
+      const postIds = [
+        ...new Set(userComments.map((comment) => comment.postId)),
+      ];
+
+      // Tìm tất cả các bài post tương ứng
+      const posts = await PostModel.find({ _id: { $in: postIds } });
+
+      res.status(200).json({ posts });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -8,10 +8,11 @@ router.get(
   "/getCommentsByPostId/:postId",
   CommentController.getCommentsByPostId
 );
-router.get(
-  "/getCommentsByUserId/:userId",
-  CommentController.getCommentsByUserId
-);
+
+router.get("/getComments", verifyToken, CommentController.getComments);
+
+router.get("/getAllComments", verifyToken, CommentController.getAllComments);
+
 router.put(
   "/editComment/:commentId",
   verifyToken,
@@ -28,4 +29,11 @@ router.delete(
   verifyToken,
   CommentController.deleteComment
 );
+
+router.get(
+  "/getPostWithUserComment",
+  verifyToken,
+  CommentController.getPostWithUserComment
+);
+
 module.exports = router;
