@@ -1,4 +1,3 @@
-// import AppRoutes from "./Routers/appRoutes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignUpPage from "./Pages/Auth/SignUpPage";
 import LoginPage from "./Pages/Auth/LoginPage";
@@ -10,6 +9,7 @@ import PrivateRoute from "./Components/Layout/PrivateRoute";
 import CreatePost from "./Pages/Post/createPost";
 import ViewPost from "./Pages/Post/ViewPost";
 import UpdatePost from "./Pages/Post/UpdatePost";
+import Search from "./Pages/Dashboards/Search";
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +25,7 @@ function App() {
           <Route path="/update-post/:postId" element={<UpdatePost />} />
         </Route>
         <Route path="/post/:postSlug" element={<ViewPost />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
     </BrowserRouter>
   );
