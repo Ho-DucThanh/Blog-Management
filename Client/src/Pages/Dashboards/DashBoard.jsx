@@ -5,6 +5,7 @@ import Users from "../../Components/Layout/Admin/DashUsers";
 import Posts from "../../Components/Layout/Admin/DashPosts";
 import ProfileForm from "../../Components/Forms/ProfileForm";
 import Comments from "../../Components/Layout/Admin/DashComments";
+import Dash_DashBoard from "../../Components/Layout/Dash_DashBoard";
 
 export default function DashBoard() {
   const location = useLocation();
@@ -22,6 +23,7 @@ export default function DashBoard() {
         <DashSidebar />
       </div>
       <div className="w-full p-4">
+        {tab === "dash" && <Dash_DashBoard />}
         {tab === "posts" && <Posts />}
         {tab === "users" && <Users />}
         {tab === "profile" && <ProfileForm />}

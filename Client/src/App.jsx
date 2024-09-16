@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignUpPage from "./Pages/Auth/SignUpPage";
 import LoginPage from "./Pages/Auth/LoginPage";
-import HomeDashBoard from "./Pages/Dashboards/home";
+import ChangePassWordPage from "./Pages/Auth/ChangePassPage";
+import Home from "./Pages/Dashboards/home";
 import DashBoard from "./Pages/Dashboards/DashBoard";
 import Header from "./Components/Layout/header";
 import Scroll from "./Components/Common/Scroll";
@@ -16,10 +17,11 @@ function App() {
       <Scroll />
       <Header />
       <Routes>
-        <Route path="/" element={<HomeDashBoard />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route element={<PrivateRoute />}>
+          <Route path="change-password" element={<ChangePassWordPage />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/update-post/:postId" element={<UpdatePost />} />

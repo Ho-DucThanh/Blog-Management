@@ -43,7 +43,7 @@ export default function HomeDashBoard() {
         </div>
 
         <div className="relative my-8 sm:my-10">
-          <div className="aspect-w-16 aspect-h-9 overflow-hidden rounded-lg">
+          <div className="overflow-hidden rounded-lg">
             <img
               src="https://bizflyportal.mediacdn.vn/bizflyportal/1396/2428/2021/04/26/17/17/blo16194106288091.jpg"
               alt="Blog Banner"

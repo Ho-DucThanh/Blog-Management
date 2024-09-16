@@ -34,7 +34,7 @@ export const loginUser = async (user, dispatch, setError, navigate) => {
     getProfileUser(data.user._id, data.accessToken, dispatch, setError);
 
     alert("Login successful");
-    navigate("/dashboard");
+    navigate("/");
   } catch (error) {
     setError(error.message);
     dispatch(loginFailure(error.message));
@@ -136,5 +136,32 @@ export const deleteUser = async (accessToken, id) => {
     return data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const changPasswordUser = async (
+  accessToken,
+  id,
+  dataUser,
+  setError,
+) => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/auth/updateUser/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(dataUser),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+    console.log("Response from server:", data);
+    alert("Password changed successfully");
+  } catch (err) {
+    setError(err.message);
+    console.log(err);
   }
 };

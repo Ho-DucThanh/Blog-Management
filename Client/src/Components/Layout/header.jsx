@@ -15,7 +15,7 @@ import { logoutUser } from "../../Redux/Auth/Auth_apiRequest";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
-  { name: "Post", href: "/dashboard", current: false },
+  { name: "Post", href: "/dashboard?tab=dash", current: false },
   { name: "About", href: "#", current: false },
 ];
 
