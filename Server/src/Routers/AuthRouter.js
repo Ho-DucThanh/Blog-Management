@@ -17,4 +17,6 @@ router.delete(
   AuthController.deleteUser
 );
 
+router.put("/updateUser/:id", verifyToken, AuthController.ChangePassword);
+
 module.exports = router;

@@ -188,7 +188,61 @@ const AuthController = {
       res.status(200).json({ message: "User deleted successfully" });
     } catch (err) {
       res.status(500).json(err.message);
-    } 
+    }
+  },
+
+  ChangePassword: async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Old password, and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
+    }
+
+    try {
+      const user = await UserModel.findById(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: "Invalid email or password" });
+      }
+
+      // Check login có hợp lệ hay không(chính chủ)
+      if (req.user.id !== user._id.toString()) {
+        return res
+          .status(403)
+          .json({ message: "Unauthorized to change password" });
+      }
+
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid old password" });
+      }
+
+      const isOldPasswordSame = await bcrypt.compare(
+        newPassword,
+        user.password
+      ); // Thêm kiểm tra
+      if (isOldPasswordSame) {
+        return res.status(400).json({
+          message: "New password cannot be the same as the old password",
+        }); // Thêm thông báo lỗi
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedNewPassword;
+      await user.save();
+      return res.status(200).json({ message: "Password changed successfully" });
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
+    }
   },
 };
 
