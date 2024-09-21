@@ -2,7 +2,8 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
-import { getAllPost, deletePost } from "../../../Redux/Post/Post_apiRequest";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
+import { deletePost } from "../../../Redux/Post/Post_apiRequest";
 import { getAllProfiles } from "../../../Redux/Home/Profile_apiRequest";
 
 export default function Posts() {
@@ -38,7 +39,6 @@ export default function Posts() {
       try {
         const profileData = await getAllProfiles(accessToken, setError);
         setProfiles(profileData);
-        console.log(profileData);
       } catch (err) {
         setError(err.message);
       }
@@ -162,21 +162,10 @@ export default function Posts() {
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <svg
-            class="me-2 h-3.5 w-3.5 rtl:rotate-180"
+          <HiArrowLeft
+            className="me-2 h-3.5 w-3.5 rtl:rotate-180"
             aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 10"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 5H1m0 0 4 4M1 5l4-4"
-            />
-          </svg>
+          />
           Prev
         </button>
         <span className="font-semibold text-gray-900">
@@ -188,21 +177,10 @@ export default function Posts() {
           disabled={currentPage === totalPages}
         >
           Next
-          <svg
-            class="ms-2 h-3.5 w-3.5 rtl:rotate-180"
+          <HiArrowRight
+            className="ms-2 h-3.5 w-3.5 rtl:rotate-180"
             aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 10"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M1 5h12m0 0L9 1m4 4L9 9"
-            />
-          </svg>
+          />
         </button>
       </div>
 

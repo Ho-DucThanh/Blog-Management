@@ -6,6 +6,7 @@ import {
   deleteComment,
 } from "../../../Redux/Comment/Comment_apiRequest";
 import { getAllPost } from "../../../Redux/Post/Post_apiRequest";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 export default function Comments() {
   const [data, setData] = useState([]);
@@ -13,26 +14,24 @@ export default function Comments() {
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const [profiles, setProfiles] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Thêm trạng thái cho số trang hiện tại
+  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+
+  const limit = 12; // Số bài post trên mỗi trang
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         let comments;
-        if (currentUser.admin) {
-          comments = await getAllComments(accessToken);
-        } else {
-          const response = await fetch(
-            `/api/comment/getComments?userId=${currentUser._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
-          );
-          comments = await response.json();
-        }
-        console.log("Fetched Comments:", comments);
-        setData(comments.comments || comments);
+        const url = currentUser.admin
+          ? `/api/comment/getComments?page=${currentPage}&limit=${limit}`
+          : `/api/comment/getComments?userId=${currentUser._id}&page=${currentPage}&limit=${limit}`;
+
+        const response = await fetch(url);
+        const result = await response.json();
+        comments = result.comments || result;
+        setData(comments);
+        setTotalPages(result.totalPages);
       } catch (err) {
         setError(err.message);
       }
@@ -78,6 +77,12 @@ export default function Comments() {
     fetchProfiles();
   }, [accessToken, currentUser]);
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   const getUsernameForComment = (comment) => {
     const matchingProfile = profiles.find(
       (profile) => profile.user_id === comment.user_id,
@@ -87,7 +92,6 @@ export default function Comments() {
 
   const getPostTitleForComment = (comment) => {
     const matchingPost = posts.find((post) => post._id === comment.postId);
-    console.log(matchingPost);
     return matchingPost ? matchingPost.title : "Post";
   };
 
@@ -170,6 +174,33 @@ export default function Comments() {
           )}
         </tbody>
       </table>
+      <div className="my-6 flex flex-col items-center justify-end space-y-2 md:flex-row md:space-x-4 md:space-y-0">
+        <button
+          className="flex h-8 items-center justify-center rounded-xl bg-gray-800 px-3 text-sm font-medium text-white hover:bg-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <HiArrowLeft
+            className="me-2 h-3.5 w-3.5 rtl:rotate-180"
+            aria-hidden="true"
+          />
+          Prev
+        </button>
+        <span className="font-semibold text-gray-900">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="flex h-8 items-center justify-center rounded-xl border-s border-gray-700 bg-gray-800 px-3 text-sm font-medium text-white hover:bg-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+          <HiArrowRight
+            className="ms-2 h-3.5 w-3.5 rtl:rotate-180"
+            aria-hidden="true"
+          />
+        </button>
+      </div>
     </div>
   );
 }
