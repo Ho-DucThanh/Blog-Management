@@ -100,8 +100,9 @@ const PostController = {
 
   getPost: async (req, res) => {
     try {
-      const startIndex = parseInt(req.query.startIndex) || 0;
-      const limit = parseInt(req.query.limit) || 9;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 6;
+      const startIndex = (page - 1) * limit;
       const sortDirection = req.query.order === "asc" ? 1 : -1;
       const posts = await PostModel.find({
         ...(req.query.userId && { user_id: req.query.userId }),
@@ -121,6 +122,8 @@ const PostController = {
       res.status(200).json({
         posts,
         totalPosts,
+        totalPages: Math.ceil(totalPosts / limit),
+        currentPage: page,
       });
     } catch (error) {
       console.log(error);
