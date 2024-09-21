@@ -89,8 +89,9 @@ const CommentController = {
 
   getComments: async (req, res) => {
     try {
-      const startIndex = req.query.startIndex || 0;
-      const limit = req.query.limit || 9;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 12;
+      const startIndex = (page - 1) * limit;
       const sortDirection = req.query.sort === "desc" ? -1 : 1;
       const comments = await CommentModel.find({
         ...(req.query.userId && { user_id: req.query.userId }),
@@ -103,7 +104,12 @@ const CommentController = {
         .skip(startIndex)
         .limit(limit);
       const totalComments = await CommentModel.countDocuments();
-      res.status(200).json({ comments, totalComments });
+      res.status(200).json({
+        comments,
+        totalComments,
+        totalPages: Math.ceil(totalComments / limit),
+        currentPage: page,
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
