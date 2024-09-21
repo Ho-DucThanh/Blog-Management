@@ -9,7 +9,7 @@ router.get(
   CommentController.getCommentsByPostId
 );
 
-router.get("/getComments", verifyToken, CommentController.getComments);
+router.get("/getComments", CommentController.getComments);
 
 router.get("/getAllComments", verifyToken, CommentController.getAllComments);
 
