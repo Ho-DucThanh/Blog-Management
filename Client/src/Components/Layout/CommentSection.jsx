@@ -5,7 +5,7 @@ import {
   getCommentsByPostId,
   likeComment,
   deleteComment,
-} from "../../Redux/Commet/Comment_apiRequest";
+} from "../../Redux/Comment/Comment_apiRequest";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";

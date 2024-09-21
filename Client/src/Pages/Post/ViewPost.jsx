@@ -17,9 +17,7 @@ export default function ViewPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/post/getPost?slug=${postSlug}`,
-        );
+        const response = await fetch(`/api/post/getPost?slug=${postSlug}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -37,9 +35,7 @@ export default function ViewPost() {
   useEffect(() => {
     const fetchRecentPosts = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/post/getPost?limit=6`,
-        );
+        const response = await fetch(`/api/post/getPost?limit=6`);
         const data = await response.json();
         if (response.ok) {
           setRecentPosts(data.posts);

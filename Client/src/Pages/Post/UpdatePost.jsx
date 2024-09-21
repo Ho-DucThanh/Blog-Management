@@ -17,7 +17,7 @@ export default function UpdatePost() {
   useEffect(() => {
     const fetchPost = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/post/getPost?postId=${postId}`,
+        `/api/post/getPost?postId=${postId}`,
       );
       if (!response.ok) {
         throw new Error("Cannot get post");

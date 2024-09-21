@@ -39,9 +39,7 @@ export default function Search() {
       if (searchTerm) searchParams.set("searchTerm", searchTerm);
       if (category && category !== "all")
         searchParams.set("category", category);
-      const res = await fetch(
-        `http://localhost:3000/api/post/getPost?${searchParams.toString()}`,
-      );
+      const res = await fetch(`/api/post/getPost?${searchParams.toString()}`);
       if (!res.ok) {
         throw new Error("Failed to fetch posts");
       }

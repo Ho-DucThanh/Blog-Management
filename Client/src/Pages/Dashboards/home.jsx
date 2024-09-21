@@ -10,9 +10,7 @@ export default function HomeDashBoard() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/post/getPost?limit=4`,
-        );
+        const response = await fetch(`/api/post/getPost?limit=4`);
         const data = await response.json();
         if (response.ok) {
           setPosts(data.posts);

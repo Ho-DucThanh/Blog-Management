@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaThumbsUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { editComment } from "../../Redux/Commet/Comment_apiRequest";
+import { editComment } from "../../Redux/Comment/Comment_apiRequest";
 import moment from "moment";
 
 export default function Comment({ comment, onLike, onEdit, onDelete }) {
@@ -15,7 +15,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/getUserProfileById/${comment.user_id}`,
+          `/api/getUserProfileById/${comment.user_id}`,
           {
             method: "GET",
             headers: {

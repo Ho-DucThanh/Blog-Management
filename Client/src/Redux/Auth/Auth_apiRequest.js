@@ -15,7 +15,7 @@ import { getProfileUser } from "../Home/Profile_apiRequest";
 export const loginUser = async (user, dispatch, setError, navigate) => {
   dispatch(loginStart());
   try {
-    const response = await fetch("http://localhost:3000/api/auth/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export const loginUser = async (user, dispatch, setError, navigate) => {
 export const registerUser = async (user, dispatch, navigate, setError) => {
   dispatch(registerStart());
   try {
-    const response = await fetch("http://localhost:3000/api/auth/register", {
+    const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const registerUser = async (user, dispatch, navigate, setError) => {
 export const logoutUser = async (accessToken, id, dispatch, navigate) => {
   dispatch(logoutStart());
   try {
-    const response = await fetch("http://localhost:3000/api/auth/logout", {
+    const response = await fetch("/api/auth/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export const logoutUser = async (accessToken, id, dispatch, navigate) => {
 
 export const getListUsers = async (accessToken) => {
   try {
-    const response = await fetch("http://localhost:3000/api/getAllUsers", {
+    const response = await fetch("/api/getAllUsers", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -117,16 +117,13 @@ export const getListUsers = async (accessToken) => {
 
 export const deleteUser = async (accessToken, id) => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/auth/deleteUser/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
+    const response = await fetch(`/api/auth/deleteUser/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+    });
 
     const data = await response.json();
     if (!response.ok) {
@@ -146,7 +143,7 @@ export const changPasswordUser = async (
   setError,
 ) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/auth/updateUser/${id}`, {
+    const res = await fetch(`/api/auth/updateUser/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

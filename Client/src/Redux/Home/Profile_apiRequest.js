@@ -8,7 +8,7 @@ export const CreateProfileUser = async (
 ) => {
   dispatch(profileStart());
   try {
-    const response = await fetch("http://localhost:3000/api/profile", {
+    const response = await fetch("/api/profile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,16 +40,13 @@ export const getProfileUser = async (
 ) => {
   dispatch(profileStart());
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/profile/${user_id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
+    const response = await fetch(`/api/profile/${user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+    });
 
     if (response.status === 404) {
       return null;
@@ -79,17 +76,14 @@ export const updateProfileUser = async (
 ) => {
   dispatch(profileStart());
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/profile/${user_id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(profile),
+    const response = await fetch(`/api/profile/${user_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+      body: JSON.stringify(profile),
+    });
 
     const data = await response.json();
     console.log(data);
@@ -109,7 +103,7 @@ export const updateProfileUser = async (
 
 export const getAllProfiles = async (accessToken, setError) => {
   try {
-    const response = await fetch("http://localhost:3000/api/getAllProfiles", {
+    const response = await fetch("/api/getAllProfiles", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -9,7 +9,7 @@ export const createPost_Api = async (
 ) => {
   dispatch(postStart());
   try {
-    const response = await fetch("http://localhost:3000/api/post/create", {
+    const response = await fetch("/api/post/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const createPost_Api = async (
 
 export const getAllPost = async (accessToken) => {
   try {
-    const response = await fetch("http://localhost:3000/api/post/getAllPost", {
+    const response = await fetch("/api/post/getAllPost", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -58,16 +58,13 @@ export const getAllPost = async (accessToken) => {
 
 export const deletePost = async (postId, userId, accessToken) => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/post/deletepost/${postId}/${userId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
+    const response = await fetch(`/api/post/deletepost/${postId}/${userId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+    });
 
     const data = await response.json();
     if (!response.ok) {
@@ -89,17 +86,14 @@ export const updatePost = async (
   navigate,
 ) => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/post/updatepost/${postId}/${userId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(post),
+    const response = await fetch(`/api/post/updatepost/${postId}/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+      body: JSON.stringify(post),
+    });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Failed to update post");

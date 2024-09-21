@@ -4,7 +4,7 @@ import { getAllProfiles } from "../../../Redux/Home/Profile_apiRequest";
 import {
   getAllComments,
   deleteComment,
-} from "../../../Redux/Commet/Comment_apiRequest";
+} from "../../../Redux/Comment/Comment_apiRequest";
 import { getAllPost } from "../../../Redux/Post/Post_apiRequest";
 
 export default function Comments() {
@@ -22,7 +22,7 @@ export default function Comments() {
           comments = await getAllComments(accessToken);
         } else {
           const response = await fetch(
-            `http://localhost:3000/api/comment/getComments?userId=${currentUser._id}`,
+            `/api/comment/getComments?userId=${currentUser._id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -46,7 +46,7 @@ export default function Comments() {
           posts = await getAllPost(accessToken);
         } else {
           const response = await fetch(
-            `http://localhost:3000/api/comment/getPostWithUserComment?userId=${currentUser._id}`,
+            `/api/comment/getPostWithUserComment?userId=${currentUser._id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,

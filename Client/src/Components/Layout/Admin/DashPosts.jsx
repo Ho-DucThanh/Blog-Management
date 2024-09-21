@@ -10,26 +10,25 @@ export default function Posts() {
   const [error, setError] = useState("");
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const [profiles, setProfiles] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Thêm trạng thái cho số trang hiện tại
+  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+
+  const limit = 6; // Số bài post trên mỗi trang
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         let posts;
-        if (currentUser.admin) {
-          posts = await getAllPost(accessToken);
-        } else {
-          const response = await fetch(
-            `http://localhost:3000/api/post/getPost?userId=${currentUser._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
-          );
-          posts = await response.json();
-        }
+        const url = currentUser.admin
+          ? `/api/post/getPost?page=${currentPage}&limit=${limit}`
+          : `/api/post/getPost?userId=${currentUser._id}&page=${currentPage}&limit=${limit}`;
 
-        setData(posts.posts || posts);
+        const response = await fetch(url);
+
+        const result = await response.json();
+        posts = result.posts || result;
+        setData(posts);
+        setTotalPages(result.totalPages);
       } catch (err) {
         setError(err.message);
       }
@@ -47,7 +46,13 @@ export default function Posts() {
 
     fetchPosts();
     fetchProfiles();
-  }, [accessToken, currentUser]);
+  }, [accessToken, currentUser, currentPage]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   const getUsernameForPost = (post) => {
     const matchingProfile = profiles.find(
@@ -150,6 +155,26 @@ export default function Posts() {
           )}
         </tbody>
       </table>
+
+      <div className="my-4 flex justify-center space-x-2">
+        <button
+          className="rounded bg-gray-200 px-4 py-2"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="rounded bg-gray-200 px-4 py-2"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
 
       <Link
         to="/create-post"
