@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { getAllProfiles } from "../../../Redux/Home/Profile_apiRequest";
+import { getAllUsersProfileNotAdmin } from "../../../Redux/Home/Profile_apiRequest";
 import { useEffect, useState } from "react";
 import { deleteUser } from "../../../Redux/Auth/Auth_apiRequest";
 
@@ -12,7 +12,10 @@ export default function Users() {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const profileData = await getAllProfiles(accessToken, setError);
+        const profileData = await getAllUsersProfileNotAdmin(
+          accessToken,
+          setError,
+        );
         setProfiles(profileData);
         console.log(profileData);
       } catch (err) {

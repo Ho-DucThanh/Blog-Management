@@ -1,10 +1,12 @@
 import { Button } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import PostCard from "../../Components/Layout/PostCard";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllProfiles } from "../../Redux/Home/Profile_apiRequest";
+import PostCard from "../../Components/Layout/PostCard";
 import CommentSection from "../../Components/Layout/CommentSection";
+import OptionsMenu from "../../Components/Layout/OptionsMenu";
+
 export default function ViewPost() {
   const { postSlug } = useParams();
   const [post, setPost] = useState(null);
@@ -13,6 +15,8 @@ export default function ViewPost() {
   const [recentPosts, setRecentPosts] = useState(null);
   const { currentUser, accessToken } = useSelector((state) => state.auth.login);
   const [author, setAuthor] = useState(null);
+  const [showOptions, setShowOptions] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -77,16 +81,35 @@ export default function ViewPost() {
     fetchUserProfiles();
   }, [post, accessToken, dispatch]);
 
+  const handleImageClick = (e) => {
+    e.stopPropagation(); // Ngăn chặn sự kiện click từ lan ra ngoài
+    // Lấy vị trí của đối tượng nhấn chuột và đặt tọa độ cho menu
+    const rect = e.target.getBoundingClientRect();
+    setMenuPosition({
+      top: 80,
+      left: 80,
+    });
+    setShowOptions((prev) => !prev);
+  };
+
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col p-3">
       <div className="ml-3 mt-5 flex items-center gap-2">
         <img
           src={author && author.avatar}
           alt={author && author.userName}
-          className="h-10 w-10 rounded-full object-cover"
+          className="h-10 w-10 rounded-full object-cover hover:cursor-pointer"
+          onClick={handleImageClick}
         />
         <span>{author && author.userName}</span>
       </div>
+
+      <OptionsMenu
+        showOptions={showOptions}
+        setShowOptions={setShowOptions}
+        position={menuPosition}
+      />
+
       <h1 className="mx-auto max-w-2xl p-3 text-center font-serif text-3xl lg:text-4xl">
         {post && post.title}
       </h1>

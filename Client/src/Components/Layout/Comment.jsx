@@ -3,13 +3,23 @@ import { FaThumbsUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { editComment } from "../../Redux/Comment/Comment_apiRequest";
 import moment from "moment";
+import OptionsMenu from "./OptionsMenu";
 
-export default function Comment({ comment, onLike, onEdit, onDelete }) {
+export default function Comment({
+  comment,
+  onLike,
+  onEdit,
+  onDelete,
+  activeCommentId,
+  setActiveCommentId,
+}) {
   const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [error, setError] = useState(null);
   const { accessToken, currentUser } = useSelector((state) => state.auth.login);
+  const [showOptions, setShowOptions] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -55,15 +65,35 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
     }
   };
 
+  const handleImageClick = (e) => {
+    e.stopPropagation();
+    const rect = e.target.getBoundingClientRect();
+    setMenuPosition({
+      top: rect.bottom + window.scrollY - 70, // Vị trí từ phía trên cửa sổ
+      left: rect.left + window.scrollX - 130, // Vị trí từ bên trái cửa sổ
+    });
+    setActiveCommentId(comment._id);
+  };
+
   return (
     <div className="flex border-b p-4 text-sm dark:border-gray-200">
       <div className="mr-3 flex-shrink-0">
         <img
-          className="h-10 w-10 rounded-full bg-gray-200"
+          className="h-10 w-10 rounded-full bg-gray-200 object-cover hover:cursor-pointer"
           src={user.avatar}
           alt={user.userName}
+          onClick={handleImageClick}
         />
       </div>
+
+      {activeCommentId === comment._id && (
+        <OptionsMenu
+          showOptions={activeCommentId === comment._id}
+          setShowOptions={() => setActiveCommentId(null)} // Đặt về null khi đóng
+          position={menuPosition}
+        />
+      )}
+
       <div className="flex-1">
         <div className="mb-1 flex items-center">
           <span className="mr-1 truncate text-xs font-bold">

@@ -26,7 +26,7 @@ const menuItemsUser = [
 ];
 
 const menuItemsUserLogin = [
-  { name: "Settings", href: "/settings" },
+  { name: "Personal Page", href: "/personal-page" },
   { name: "Change Password", href: "/change-password" },
   { name: "Logout", href: "#" },
 ];

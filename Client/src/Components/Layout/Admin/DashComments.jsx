@@ -17,7 +17,7 @@ export default function Comments() {
   const [currentPage, setCurrentPage] = useState(1); // Thêm trạng thái cho số trang hiện tại
   const [totalPages, setTotalPages] = useState(1); // Tổng số trang
 
-  const limit = 12; // Số bài post trên mỗi trang
+  const limit = 12; // Số comment trên mỗi trang
 
   useEffect(() => {
     const fetchComments = async () => {

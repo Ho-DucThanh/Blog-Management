@@ -28,6 +28,7 @@ export default function CommentSection({ postId }) {
   const MAX_CHARS = 200;
   const isMaxLengthReached = content.length >= MAX_CHARS;
   const navigate = useNavigate();
+  const [activeCommentId, setActiveCommentId] = useState(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -178,6 +179,8 @@ export default function CommentSection({ postId }) {
               setShowModal(true);
               setCommentToDelete(commentId);
             }}
+            activeCommentId={activeCommentId}
+            setActiveCommentId={setActiveCommentId}
           />
         ))
       )}
