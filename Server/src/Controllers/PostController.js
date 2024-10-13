@@ -1,4 +1,5 @@
 const PostModel = require("../Models/PostModel");
+const CommentModel = require("../Models/CommentModel");
 
 const PostController = {
   createPost: async (req, res) => {
@@ -127,6 +128,56 @@ const PostController = {
       });
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  getPostByUserId: async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 6;
+      const posts = await PostModel.find({ user_id: req.query.userId });
+      return res.status(200).json(posts);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getPostWithCommentsByUserId: async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 6;
+      const sortDirection = req.query.order === "asc" ? 1 : -1;
+
+      // Define the query object for counting documents
+      const query = {
+        ...(req.query.userId && { user_id: req.query.userId }),
+        ...(req.query.category && { category: req.query.category }),
+        ...(req.query.slug && { slug: req.query.slug }),
+        ...(req.query.postId && { _id: req.query.postId }),
+        ...(req.query.searchTerm && {
+          $or: [{ title: { $regex: req.query.searchTerm, $options: "i" } }],
+        }),
+      };
+
+      const posts = await PostModel.find(query) // Use the query object here
+        .sort({ updatedAt: sortDirection })
+        .limit(limit);
+
+      // Lấy các comment cho các bài post
+      const postIds = posts.map((post) => post._id);
+      const comments = await CommentModel.find({ postId: { $in: postIds } });
+
+      // Kết hợp bài post với comment
+      const postsWithComments = posts.map((post) => ({
+        ...post.toObject(),
+        comments: comments.filter(
+          (comment) => comment.postId.toString() === post._id.toString()
+        ),
+      }));
+
+      const totalPosts = await PostModel.countDocuments(query); // Now query is defined
+
+      return res.status(200).json({ postsWithComments, totalPosts });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
     }
   },
 };

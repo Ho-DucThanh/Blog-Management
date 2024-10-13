@@ -6,6 +6,11 @@ const router = express.Router();
 
 router.get("/getAllPost", verifyToken, PostController.getAllPost);
 router.get("/getPost", PostController.getPost);
+router.get("/getPostByUserId", PostController.getPostByUserId);
+router.get(
+  "/getPostWithCommentsByUserId",
+  PostController.getPostWithCommentsByUserId
+);
 router.post("/create", verifyToken, PostController.createPost);
 router.delete(
   "/deletepost/:postId/:userId",

@@ -13,7 +13,7 @@ const UserController = {
 
   getUserProfileById: async (req, res) => {
     try {
-      const user = await ProfileModel.findOne({ user_id: req.params.id });  
+      const user = await ProfileModel.findOne({ user_id: req.params.id });
       if (!user) {
         return res.status(404).json({ message: "UserProfile not found" });
       }
@@ -24,6 +24,30 @@ const UserController = {
   },
 
   getAllUsersProfile: async (req, res) => {
+    try {
+      const nonAdminUsers = await UserModel.find({}, "_id email");
+      const profiles = await ProfileModel.find({
+        user_id: { $in: nonAdminUsers.map((user) => user._id) },
+      });
+
+      // Kết hợp thông tin từ UserModel và ProfileModel
+      const combinedProfiles = profiles.map((profile) => {
+        const user = nonAdminUsers.find(
+          (u) => u._id.toString() === profile.user_id.toString()
+        );
+        return {
+          ...profile.toObject(),
+          email: user ? user.email : null,
+        };
+      });
+
+      return res.status(200).json(combinedProfiles);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getAllUsersProfileNotAdmin: async (req, res) => {
     try {
       const nonAdminUsers = await UserModel.find({ admin: false }, "_id email");
       const profiles = await ProfileModel.find({

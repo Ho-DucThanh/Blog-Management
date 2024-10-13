@@ -9,6 +9,11 @@ router.get("/profile/:user_id", verifyToken, ProfileController.getProfile);
 router.put("/profile/:user_id", verifyToken, ProfileController.updateProfile);
 
 router.get("/getAllProfiles", verifyToken, UserController.getAllUsersProfile);
+router.get(
+  "/getAllUsersProfileNotAdmin",
+  verifyToken,
+  UserController.getAllUsersProfileNotAdmin
+);
 router.get("/getAllUsers", verifyToken, UserController.getAllUsers);
 router.get(
   "/getUserProfileById/:id",
