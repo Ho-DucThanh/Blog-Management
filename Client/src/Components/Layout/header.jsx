@@ -25,12 +25,6 @@ const menuItemsUser = [
   { name: "Policy", href: "#" },
 ];
 
-const menuItemsUserLogin = [
-  { name: "Personal Page", href: "/personal-page" },
-  { name: "Change Password", href: "/change-password" },
-  { name: "Logout", href: "#" },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -42,6 +36,12 @@ export default function Header() {
   const avatar = useSelector(
     (state) => state.profile.createProfile.currentUser?.avatar,
   );
+
+  const menuItemsUserLogin = [
+    { name: "Personal Page", href: `/personal-page/${currentUser?._id}` },
+    { name: "Change Password", href: "/change-password" },
+    { name: "Logout", href: "#" },
+  ];
 
   const handleLogout = () => {
     logoutUser(accessToken, currentUser._id, dispatch, navigate);

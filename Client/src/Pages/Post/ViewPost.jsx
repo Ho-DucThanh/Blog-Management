@@ -19,39 +19,31 @@ export default function ViewPost() {
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/post/getPost?slug=${postSlug}`);
-        if (!response.ok) {
+        // Fetch post by slug
+        const postResponse = await fetch(`/api/post/getPost?slug=${postSlug}`);
+        if (!postResponse.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
-        console.log(data);
-        setPost(data.posts[0]);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
+        const postData = await postResponse.json();
+        console.log(postData);
+        setPost(postData.posts[0]);
 
-    fetchPost();
-  }, [postSlug]);
-
-  useEffect(() => {
-    const fetchRecentPosts = async () => {
-      try {
-        const response = await fetch(`/api/post/getPost?limit=6`);
-        const data = await response.json();
-        if (response.ok) {
-          setRecentPosts(data.posts);
+        // Fetch recent posts
+        const recentResponse = await fetch(`/api/post/getPost?limit=6`);
+        const recentData = await recentResponse.json();
+        if (recentResponse.ok) {
+          setRecentPosts(recentData.posts);
         }
-        console.log(data);
+        console.log(recentData);
       } catch (error) {
         setError(error.message);
       }
     };
 
-    fetchRecentPosts();
-  }, []);
+    fetchData();
+  }, [postSlug]);
 
   useEffect(() => {
     const fetchUserProfiles = async () => {
@@ -83,11 +75,11 @@ export default function ViewPost() {
 
   const handleImageClick = (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện click từ lan ra ngoài
-    // Lấy vị trí của đối tượng nhấn chuột và đặt tọa độ cho menu
+
     const rect = e.target.getBoundingClientRect();
     setMenuPosition({
-      top: 80,
-      left: 80,
+      top: rect.bottom + window.scrollY - 70, // Vị trí từ phía trên cửa sổ
+      left: rect.left + window.scrollX - 130, // Vị trí từ bên trái cửa sổ
     });
     setShowOptions((prev) => !prev);
   };
@@ -105,6 +97,7 @@ export default function ViewPost() {
       </div>
 
       <OptionsMenu
+        commentUserId={post && post.user_id}
         showOptions={showOptions}
         setShowOptions={setShowOptions}
         position={menuPosition}

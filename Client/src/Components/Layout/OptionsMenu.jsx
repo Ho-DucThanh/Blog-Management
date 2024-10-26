@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { getAllProfiles } from "../../Redux/Home/Profile_apiRequest";
 
-export default function OptionsMenu({ showOptions, setShowOptions, position }) {
+export default function OptionsMenu({
+  commentUserId,
+  showOptions,
+  setShowOptions,
+  position,
+}) {
   const optionsRef = useRef(null);
-
   const handleClickOutside = (e) => {
     if (optionsRef.current && !optionsRef.current.contains(e.target)) {
       setShowOptions(false); // Đóng menu nếu nhấn bên ngoài
@@ -34,7 +40,7 @@ export default function OptionsMenu({ showOptions, setShowOptions, position }) {
         className="mt-2 rounded border bg-white shadow-lg"
       >
         <Link
-          to="/personal-page"
+          to={`/personal-page/${commentUserId}`}
           className="block px-4 py-2 text-sm hover:bg-gray-100"
         >
           Personal Page

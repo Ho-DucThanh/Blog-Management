@@ -11,7 +11,7 @@ import CreatePost from "./Pages/Post/createPost";
 import ViewPost from "./Pages/Post/ViewPost";
 import UpdatePost from "./Pages/Post/UpdatePost";
 import Search from "./Pages/Dashboards/Search";
-import PersonalPage from "./Components/Layout/PersonalPage";
+import PersonalPage from "./Pages/Dashboards/PersonalPage";
 function App() {
   return (
     <BrowserRouter>
@@ -29,7 +29,7 @@ function App() {
         </Route>
         <Route path="/post/:postSlug" element={<ViewPost />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/personal-page" element={<PersonalPage />} />
+        <Route path="/personal-page/:id" element={<PersonalPage />} />
       </Routes>
     </BrowserRouter>
   );

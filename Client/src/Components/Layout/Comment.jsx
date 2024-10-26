@@ -18,7 +18,6 @@ export default function Comment({
   const [editedContent, setEditedContent] = useState(comment.content);
   const [error, setError] = useState(null);
   const { accessToken, currentUser } = useSelector((state) => state.auth.login);
-  const [showOptions, setShowOptions] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
@@ -88,8 +87,9 @@ export default function Comment({
 
       {activeCommentId === comment._id && (
         <OptionsMenu
+          commentUserId={user.user_id}
           showOptions={activeCommentId === comment._id}
-          setShowOptions={() => setActiveCommentId(null)} // Đặt về null khi đóng
+          setShowOptions={() => setActiveCommentId(null)}
           position={menuPosition}
         />
       )}

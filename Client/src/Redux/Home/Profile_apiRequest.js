@@ -142,3 +142,24 @@ export const getAllUsersProfileNotAdmin = async (accessToken, setError) => {
     setError(error.message);
   }
 };
+
+export const getProfileByUserId = async (accessToken, userId) => {
+  try {
+    const response = await fetch(`/api/getUserProfileById/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load profile");
+    }
+    console.log(data);
+    return data;
+  } catch (error) {
+    setError(error.message);
+  }
+};

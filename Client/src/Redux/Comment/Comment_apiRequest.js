@@ -42,6 +42,7 @@ export const getCommentsByPostId = async (accessToken, postId) => {
     if (!response.ok) {
       throw new Error(data.message || "Failed to get comments");
     }
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
