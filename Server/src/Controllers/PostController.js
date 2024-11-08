@@ -118,7 +118,9 @@ const PostController = {
         .skip(startIndex)
         .limit(limit);
 
-      const totalPosts = await PostModel.countDocuments();
+      const totalPosts = await PostModel.countDocuments(
+        req.query.userId ? { user_id: req.query.userId } : {}
+      );
 
       res.status(200).json({
         posts,

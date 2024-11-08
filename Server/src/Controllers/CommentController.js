@@ -103,7 +103,9 @@ const CommentController = {
         .sort({ createdAt: sortDirection })
         .skip(startIndex)
         .limit(limit);
-      const totalComments = await CommentModel.countDocuments();
+      const totalComments = await CommentModel.countDocuments(
+        req.query.userId ? { user_id: req.query.userId } : {}
+      );
       res.status(200).json({
         comments,
         totalComments,
