@@ -6,24 +6,32 @@ import {
   CalendarDateRangeIcon,
   HomeIcon,
   UserCircleIcon,
+  HeartIcon,
+  ChatBubbleOvalLeftIcon,
 } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import CommentSection from "../../Components/Layout/CommentSection";
 
 export default function PersonalPage() {
   const { id } = useParams();
   const [userData, setUserData] = useState([]);
-  const { accessToken } = useSelector((state) => state.auth.login);
-
-  const [isEditing, setIsEditing] = useState(false);
-  const handleEditProfile = () => {
-    setIsEditing(!isEditing);
-  };
+  const [postData, setPostData] = useState([]);
+  const { currentUser, accessToken } = useSelector((state) => state.auth.login);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getProfileByUserId(accessToken, id);
       setUserData(data);
     };
+
+    const fetchPost = async () => {
+      const url = `/api/post/getPostWithCommentsByUserId?userId=${id}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setPostData(data);
+    };
     fetchData();
+    fetchPost();
   }, [accessToken, id]);
 
   return (
@@ -64,17 +72,26 @@ export default function PersonalPage() {
                 />
               </div>
             </div>
-            <div className="mt-4 flex space-x-4">
-              <button className="rounded bg-blue-500 px-4 py-2 shadow hover:bg-blue-600">
-                + Add Friend
-              </button>
-              <button
-                onClick={handleEditProfile}
-                className="rounded bg-gray-700 px-4 py-2 shadow hover:bg-gray-600"
-              >
-                Chỉnh sửa trang cá nhân
-              </button>
-            </div>
+
+            {id === currentUser._id ? (
+              <div className="mt-4 flex space-x-4">
+                <a
+                  className="rounded bg-gray-700 px-4 py-2 shadow hover:bg-gray-600"
+                  href="/dashboard?tab=profile"
+                >
+                  Chỉnh sửa trang cá nhân
+                </a>
+              </div>
+            ) : (
+              <div className="mt-4 flex space-x-4">
+                <button className="rounded bg-blue-500 px-4 py-2 shadow hover:bg-blue-600">
+                  Theo dõi
+                </button>
+                <button className="rounded bg-gray-700 px-4 py-2 shadow hover:bg-gray-600">
+                  Nhắn tin
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -94,7 +111,7 @@ export default function PersonalPage() {
 
       {/* Introduction Section */}
       <div className="mt-6 flex space-x-6 p-6">
-        <div className="w-1/3 rounded bg-gray-800 p-4 shadow">
+        <div className="sticky top-20 h-4/5 w-1/3 rounded bg-gray-800 p-4 shadow">
           <h2 className="mb-4 text-xl font-semibold">Giới thiệu</h2>
           <div className="mt-4">
             <p className="flex items-center gap-4">
@@ -102,24 +119,91 @@ export default function PersonalPage() {
                 className="block h-8 w-8"
                 aria-hidden="true"
               />
-              <span className="font-bold">Birth Day {userData.date}</span>
+              <span className="font-bold">
+                Birth Day{" "}
+                {userData.date
+                  ? format(new Date(userData.date), "dd/MM/yyyy")
+                  : "N/A"}
+              </span>
             </p>
 
             <p className="flex items-center gap-5">
               <HomeIcon className="block h-8 w-8" aria-hidden="true" />
               <span className="font-bold">{userData.address}</span>
             </p>
-            <button className="mt-2 w-full rounded bg-gray-700 py-2 shadow hover:bg-gray-600">
+            <a
+              href="/dashboard?tab=profile"
+              className="mt-2 block w-full rounded bg-gray-700 py-2 text-center shadow hover:bg-gray-600"
+            >
               Chỉnh sửa chi tiết
-            </button>
+            </a>
           </div>
         </div>
 
-        {/* Post Section */}
         <div className="flex-1 rounded bg-gray-800 p-4 shadow">
+          <div className="mb-4">
+            <div className="flex items-center space-x-4">
+              <img
+                src={userData.avatar}
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+              />
+              <input
+                type="text"
+                placeholder="Tìm kiếm bài viết"
+                className="flex-1 rounded bg-gray-700 p-2 outline-none"
+              />
+            </div>
+          </div>
           <div className="mt-4">
-            <h2 className="text-lg font-bold">Bài viết</h2>
-            <p className="mt-2 text-gray-400">Chưa có bài viết nào.</p>
+            <h2 className="text-lg font-bold">
+              {postData.totalPosts} Bài viết
+            </h2>
+            {postData.totalPosts > 0 ? (
+              postData.postsWithComments.map((post) => (
+                <div
+                  key={post._id}
+                  className="mt-4 rounded bg-gray-900 p-4 shadow-md"
+                >
+                  {/* Hiển thị tiêu đề bài viết */}
+                  <h3 className="text-xl font-bold">{post.title}</h3>
+
+                  {/* Hình ảnh */}
+                  {post.image && (
+                    <img
+                      src={post.image}
+                      alt="Post Image"
+                      className="mt-2 w-full rounded-lg object-cover"
+                      style={{ maxHeight: "400px" }}
+                    />
+                  )}
+
+                  {/* Nội dung */}
+                  <div
+                    className="mt-2 text-gray-300"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  />
+
+                  {/* Số lượng bình luận và lượt thích */}
+                  <div className="mt-3 flex items-center space-x-6 text-gray-400">
+                    <div className="flex items-center space-x-1">
+                      <ChatBubbleOvalLeftIcon className="h-5 w-5" />
+                      <span>{post.comments.length}</span>
+                    </div>
+                  </div>
+
+                  {/* Comment Section */}
+                  <div className="mt-4">
+                    <CommentSection
+                      postId={post._id}
+                      comments={post.comments}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="mt-2 text-gray-400">Chưa có bài viết nào.</p>
+            )}
           </div>
         </div>
       </div>

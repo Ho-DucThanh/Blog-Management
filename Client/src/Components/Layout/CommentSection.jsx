@@ -66,8 +66,10 @@ export default function CommentSection({ postId }) {
       );
       setComments([...comments, newComment]);
       setContent("");
-    } catch (err) {
+      setIsLoading(false);
+    } catch (err) { 
       setError(err.message);
+      setIsLoading(false);
     }
   };
 

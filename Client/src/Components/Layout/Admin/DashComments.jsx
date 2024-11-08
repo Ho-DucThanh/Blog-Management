@@ -29,6 +29,7 @@ export default function Comments() {
 
         const response = await fetch(url);
         const result = await response.json();
+        console.log("Fetched comments:", result);
         comments = result.comments || result;
         setData(comments);
         setTotalPages(result.totalPages);
@@ -75,7 +76,7 @@ export default function Comments() {
     fetchComments();
     fetchPosts();
     fetchProfiles();
-  }, [accessToken, currentUser]);
+  }, [accessToken, currentUser, currentPage]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
