@@ -8,6 +8,8 @@ const authRouter = require("./Routers/AuthRouter");
 const profileRouter = require("./Routers/ProfileRouter");
 const postRouter = require("./Routers/PostRouter");
 const commentRouter = require("./Routers/CommentRouter");
+const followRouter = require("./Routers/FollowRouter");
+const notificationRouter = require("./Routers/NotificationRouter");
 dotenv.config();
 
 const app = express();
@@ -28,7 +30,8 @@ app.use("/api/auth", authRouter);
 app.use("/api", profileRouter);
 app.use("/api/post", postRouter);
 app.use("/api/comment", commentRouter);
-
+app.use("/api/follow", followRouter);
+app.use("/api/notification", notificationRouter);
 connectDB();
 
 app.listen(PORT, () => {

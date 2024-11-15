@@ -23,4 +23,6 @@ router.put(
   PostController.updatePost
 );
 
+router.get("/getPostByCategory", PostController.getPostByCategory);
+router.get("/getTopPosts", PostController.getTopPosts);
 module.exports = router;

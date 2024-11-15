@@ -1,5 +1,8 @@
 const PostModel = require("../Models/PostModel");
 const CommentModel = require("../Models/CommentModel");
+const NotificationModel = require("../Models/NotificationModel");
+const ProfileModel = require("../Models/ProfileModel");
+const FollowModel = require("../Models/FollowModel");
 
 const PostController = {
   createPost: async (req, res) => {
@@ -22,7 +25,21 @@ const PostController = {
       user_id: req.user.id,
     });
     try {
+      const userProfile = await ProfileModel.findOne({ user_id: req.user.id });
+      const userName = userProfile ? userProfile.userName : "Unknown User";
+
       const savePost = await newPost.save();
+
+      // Tạo thông báo cho các người theo dõi
+      const followers = await FollowModel.find({ following: req.user.id });
+      for (const follower of followers) {
+        await NotificationModel.create({
+          user_id: req.user.id, // Người dùng A
+          user_receive: follower.follower, // Người dùng B
+          type: "post",
+          message: `Người dùng ${userName} đã đăng một bài viết`,
+        });
+      }
       return res.status(201).json(savePost);
     } catch (err) {
       console.error("Error saving post:", err);
@@ -42,6 +59,13 @@ const PostController = {
           .status(403)
           .json({ message: "You are not authorized to delete this post" });
       }
+
+      const user_id = req.user.id;
+      // Xóa comment
+      await CommentModel.deleteMany({ postId: req.params.postId });
+
+      // Xóa thông báo
+      await NotificationModel.deleteMany({ user_id, type: "post" });
 
       await PostModel.findByIdAndDelete(req.params.postId);
       return res.status(200).json({ message: "The Post deleted successfully" });
@@ -178,6 +202,77 @@ const PostController = {
       const totalPosts = await PostModel.countDocuments(query); // Now query is defined
 
       return res.status(200).json({ postsWithComments, totalPosts });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getPostByCategory: async (req, res) => {
+    try {
+      const categories = [
+        "Công Nghệ",
+        "Sức khỏe",
+        "Du lịch",
+        "Đời sống",
+        "Thể Thao",
+      ];
+      const posts = await PostModel.find({ category: { $in: categories } });
+      const categoryCount = {};
+
+      // Đếm số lượng bài viết theo từng chủ đề
+      categories.forEach((category) => {
+        categoryCount[category] = 0; // Khởi tạo số lượng cho tất cả các danh mục
+      });
+
+      posts.forEach((post) => {
+        categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
+      });
+
+      // Tìm chủ đề có tổng số bài viết lớn nhất
+      const maxCount = Math.max(...Object.values(categoryCount));
+      const mostFrequentCategories = Object.keys(categoryCount).filter(
+        (category) => categoryCount[category] === maxCount
+      );
+
+      return res
+        .status(200)
+        .json({ categoryCount, mostFrequentCategories, maxCount });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+
+  getTopPosts: async (req, res) => {
+    try {
+      // Lấy tất cả các bài viết
+      const posts = await PostModel.find();
+      const postIds = posts.map((post) => post._id);
+
+      // Lấy tất cả các comment cho các bài post
+      const comments = await CommentModel.find({ postId: { $in: postIds } });
+
+      // Đếm số lượng comment cho mỗi bài post
+      const postCommentCount = {};
+      comments.forEach((comment) => {
+        postCommentCount[comment.postId] =
+          (postCommentCount[comment.postId] || 0) + 1;
+      });
+
+      // Tạo danh sách các bài post với số lượng comment
+      const postsWithCommentCount = posts.map((post) => ({
+        ...post.toObject(),
+        commentCount: postCommentCount[post._id] || 0,
+      }));
+
+      // Sắp xếp các bài post theo số lượng comment giảm dần
+      const topPosts = postsWithCommentCount.sort(
+        (a, b) => b.commentCount - a.commentCount
+      );
+
+      const topN = 5;
+      const result = topPosts.slice(0, topN);
+
+      return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
