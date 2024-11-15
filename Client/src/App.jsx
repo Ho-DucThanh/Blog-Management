@@ -12,6 +12,7 @@ import ViewPost from "./Pages/Post/ViewPost";
 import UpdatePost from "./Pages/Post/UpdatePost";
 import Search from "./Pages/Dashboards/Search";
 import PersonalPage from "./Pages/Dashboards/PersonalPage";
+import NewsFeed from "./Pages/Dashboards/NewsFeed";
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +31,7 @@ function App() {
         <Route path="/post/:postSlug" element={<ViewPost />} />
         <Route path="/search" element={<Search />} />
         <Route path="/personal-page/:id" element={<PersonalPage />} />
+        <Route path="/newsfeed/:id" element={<NewsFeed />} />
       </Routes>
     </BrowserRouter>
   );

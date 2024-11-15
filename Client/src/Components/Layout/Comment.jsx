@@ -85,14 +85,15 @@ export default function Comment({
         />
       </div>
 
-      {activeCommentId === comment._id && (
-        <OptionsMenu
-          commentUserId={user.user_id}
-          showOptions={activeCommentId === comment._id}
-          setShowOptions={() => setActiveCommentId(null)}
-          position={menuPosition}
-        />
-      )}
+      {currentUser._id !== comment.user_id &&
+        activeCommentId === comment._id && (
+          <OptionsMenu
+            commentUserId={user.user_id}
+            showOptions={activeCommentId === comment._id}
+            setShowOptions={() => setActiveCommentId(null)}
+            position={menuPosition}
+          />
+        )}
 
       <div className="flex-1">
         <div className="mb-1 flex items-center">

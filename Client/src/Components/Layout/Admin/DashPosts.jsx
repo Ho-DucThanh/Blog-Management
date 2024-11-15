@@ -29,7 +29,7 @@ export default function Posts() {
         const result = await response.json();
         posts = result.posts || result;
         setData(posts);
-        setTotalPages(result.totalPages);
+        setTotalPages(posts.length > 0 ? result.totalPages : 1);
       } catch (err) {
         setError(err.message);
       }

@@ -37,19 +37,6 @@ export default function DashSidebar() {
     <Sidebar className="md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
-          {currentUser && (
-            <Link to="/dashboard?tab=dash">
-              <Sidebar.Item
-                active={tab === "dash" || !tab}
-                icon={HiChartPie}
-                as="div"
-                className="transition-colors duration-200 hover:bg-gray-500"
-              >
-                DashBoard
-              </Sidebar.Item>
-            </Link>
-          )}
-
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               active={tab === "profile"}
@@ -66,6 +53,17 @@ export default function DashSidebar() {
           {/* Admin */}
           {currentUser.admin && (
             <>
+              <Link to="/dashboard?tab=dash">
+                <Sidebar.Item
+                  active={tab === "dash" || !tab}
+                  icon={HiChartPie}
+                  as="div"
+                  className="transition-colors duration-200 hover:bg-gray-500"
+                >
+                  DashBoard
+                </Sidebar.Item>
+              </Link>
+
               <Link to="/dashboard?tab=users">
                 <Sidebar.Item
                   active={tab === "users"}

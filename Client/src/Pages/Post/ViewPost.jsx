@@ -96,12 +96,14 @@ export default function ViewPost() {
         <span>{author && author.userName}</span>
       </div>
 
-      <OptionsMenu
-        commentUserId={post && post.user_id}
-        showOptions={showOptions}
-        setShowOptions={setShowOptions}
-        position={menuPosition}
-      />
+      {post && currentUser._id !== post.user_id && (
+        <OptionsMenu
+          commentUserId={post && post.user_id}
+          showOptions={showOptions}
+          setShowOptions={setShowOptions}
+          position={menuPosition}
+        />
+      )}
 
       <h1 className="mx-auto max-w-2xl p-3 text-center font-serif text-3xl lg:text-4xl">
         {post && post.title}

@@ -32,7 +32,7 @@ export default function Comments() {
         console.log("Fetched comments:", result);
         comments = result.comments || result;
         setData(comments);
-        setTotalPages(result.totalPages);
+        setTotalPages(comments.length > 0 ? result.totalPages : 1);
       } catch (err) {
         setError(err.message);
       }

@@ -12,4 +12,5 @@ Currently, two official plugins are available:
 ### docs: https://github.com/tailwindlabs/prettier-plugin-tailwindcss
 
 ### npm i axios jwt-decode react-router-dom redux react-redux @reduxjs/toolkit redux-persist
-### npm i @tailwindcss/forms @heroicons/react react-icons/fa
+
+### npm i @tailwindcss/forms @heroicons/react react-icons/fa chart.js react-chartjs-2

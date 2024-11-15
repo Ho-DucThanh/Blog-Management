@@ -46,12 +46,6 @@ export default function OptionsMenu({
           Personal Page
         </Link>
         <Link
-          to="/add-friend"
-          className="block px-4 py-2 text-sm hover:bg-gray-100"
-        >
-          Add Friend
-        </Link>
-        <Link
           to="/message"
           className="block px-4 py-2 text-sm hover:bg-gray-100"
         >
