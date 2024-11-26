@@ -11,7 +11,7 @@ export default function SignUpPage() {
           className="mx-auto h-32 w-auto"
         />
         <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Signup to your account
+          Signup to your account!
         </h2>
       </div>
 
